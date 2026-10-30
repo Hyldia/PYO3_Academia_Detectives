@@ -24,6 +24,7 @@ lugar(laboratorio).
 lugar(biblioteca).
 lugar(oficina).
 lugar(sala_evidencias).
+lugar(entrada).
 
 % Objetos
 objeto(tarjeta_maestra).
@@ -31,8 +32,8 @@ objeto(llave_laboratorio).
 objeto(expediente_secreto).
 
 % Ubicación de los objetos
-ubicado(tarjeta_acceso, biblioteca).
-ubicado(llave_maestra, laboratorio).
+ubicado(llave_laboratorio, biblioteca).
+ubicado(tarjeta_maestra, laboratorio).
 ubicado(expediente_secreto, sala_evidencias).
 
 % Accesos a lugares (Persona, Lugar)
@@ -67,10 +68,10 @@ estuvo(diego, biblioteca, 2000).
 
 estuvo(andrey, sala_evidencias, 1800).
 estuvo(andrey, biblioteca, 1900).
-estuvo(andrey, sala_evidecnias, 2000).
+estuvo(andrey, sala_evidencias, 2000).
 
 % Evento (Nombre, Lugar, Hora)
-evento(robo_expediente, sala_evidencia, 2000).
+evento(robo_expediente, sala_evidencias, 2000).
 
 % Evidencias (Evidencia, Lugar, Hora)
 evidencia(huella_digital, sala_evidencias, 2005).
