@@ -34,8 +34,8 @@ def mostrar_accesos(contenido):
     marco_botones = tk.Frame(contenido)
     marco_botones.pack(pady=10)
 
-    boton_consultar = tk.Button(marco_botones, text="Consultar", width=15, bg="#6B4366", fg="white", font=("Segoe UI", 10, "bold"), command= lambda: consultar(combo_persona, resultado_texto)) 
+    boton_consultar = tk.Button(marco_botones, text="Consultar", width=15, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command= lambda: consultar(combo_persona, resultado_texto)) 
     boton_consultar.grid(row=0, column=0, padx=5)
     
-    boton_limpiar = tk.Button(marco_botones, text="Limpiar", width=15, bg="#C592AD", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: resultado_texto.delete("1.0", tk.END))
+    boton_limpiar = tk.Button(marco_botones, text="Limpiar", width=15, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: resultado_texto.delete("1.0", tk.END))
     boton_limpiar.grid(row=0, column=1, padx=5)

@@ -21,3 +21,16 @@ tiene_acceso(Persona, Lugar) :-
   ubicado(Objeto, LugarObjeto),
   acceso(Persona, LugarObjeto).
 
+/*
+* Objetivo: Determina si una persona estuvo en un lugar en un intervalo de tiempo.
+*/
+estuvo_en_intervalo(Persona, Lugar, Inicio, Fin) :-
+  estuvo(Persona, Lugar, Hora),
+  Hora >= Inicio, % Verifica que la hora esté dentro del intervalo
+  Hora =< Fin.
+
+/*
+* Objetivo: Determina cuáles evidencias del caso han sido relacionadas con una persona.
+*/
+evidencias_de(Persona, Evidencias) :-
+  findall(Evidencia,(corresponde(Evidencia, Persona), evidencia(Evidencia, _, _)), Evidencias).
