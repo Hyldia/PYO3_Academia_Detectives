@@ -91,6 +91,7 @@ corresponde(documento_anonimo, andrey).
 testimonio(karina, biblioteca, 2000).
 testimonio(carlos, biblioteca, 2000).
 testimonio(nicole, oficina, 2000).
-testimonio(diego, laboratorio, 2000).
+% testimonio(diego, laboratorio, 2000)
+testimonio(diego, biblioteca, 2000).
 testimonio(andrey, sala_evidencias, 1900).
 
