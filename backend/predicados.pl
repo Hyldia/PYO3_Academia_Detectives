@@ -120,3 +120,41 @@ contradiccion(Persona, LugarDicho, HoraDicha, LugarRegistro, HoraRegistro) :-
 tiene_contradiccion(Persona) :-
   persona(Persona),
   once(contradiccion(Persona, _, _, _, _)).
+
+
+/*
+* Objetivo: Determina si una persona estuvo en el lugar del evento durante el intervalo del evento
+* Entradas: Persona
+* Salidas: Verdadero si estuvo_en_intervalo/4 la ubica en la escena
+* Restricciones: Usa el intervalo calculado por intervalo_evento/2
+*/
+estuvo_en_escena(Persona) :-
+  evento(_, LugarEvento, _),
+  intervalo_evento(Inicio, Fin),
+  estuvo_en_intervalo(Persona, LugarEvento, Inicio, Fin).
+
+/*
+* Objetivo: Encuentra la coartada de una persona, un testimonio que la ubica fuera de la escena a la hora del evento y que su registro de movimientos respalda
+* Entradas: Persona
+* Salidas: Lugar y Hora declarados en el testimonio
+* Restricciones: No es válida si algún registro ubica a la persona en la escena durante el evento
+*/
+coartada(Persona, Lugar, Hora) :-
+  current_predicate(testimonio/3), % el caso puede no traer testimonios
+  evento(_, LugarEvento, _),
+  testimonio(Persona, Lugar, Hora),
+  Lugar \= LugarEvento, % declara estar en otro lugar
+  en_intervalo_evento(Hora), % a la hora del evento
+  estuvo(Persona, Lugar, HoraRegistro), % el registro de movimientos lo respalda
+  cerca(Hora, HoraRegistro),
+  \+ estuvo_en_escena(Persona). % y ningún registro la ubica en la escena
+
+/*
+* Objetivo: Determina si una persona tiene una coartada válida
+* Entradas: Persona
+* Salidas: Verdadero si coartada/3 encuentra al menos una
+* Restricciones: La coartada se infiere; no existe como hecho
+*/
+tiene_coartada(Persona) :-
+  persona(Persona),
+  once(coartada(Persona, _, _)).
