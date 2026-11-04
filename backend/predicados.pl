@@ -158,3 +158,69 @@ coartada(Persona, Lugar, Hora) :-
 tiene_coartada(Persona) :-
   persona(Persona),
   once(coartada(Persona, _, _)).
+
+
+/*
+* Objetivo: Determina si una persona tiene acceso al lugar donde ocurrió el evento
+* Entradas: Persona
+* Salidas: Verdadero si tiene_acceso/2 lo permite
+* Restricciones: Incluye acceso directo y acceso por objeto
+*/
+acceso_a_escena(Persona) :-
+  evento(_, LugarEvento, _),
+  tiene_acceso(Persona, LugarEvento).
+
+/*
+* Objetivo: Determina si una persona tuvo oportunidad de participar en el evento
+* Entradas: Persona
+* Salidas: Verdadero si estuvo en la escena o tiene acceso a ella
+* Restricciones: Basta con una de las dos condiciones
+*/
+oportunidad(Persona) :-
+  estuvo_en_escena(Persona).
+oportunidad(Persona) :-
+  acceso_a_escena(Persona).
+
+/*
+* Objetivo: Encuentra las evidencias relacionadas con una persona que se hallaron en el lugar del evento
+* Entradas: Persona
+* Salidas: Evidencia.
+* Restricciones: Usa evidencia/3 y corresponde/2.
+*/
+evidencia_en_escena(Persona, Evidencia) :-
+  current_predicate(corresponde/2),      % el caso puede no relacionar evidencias con personas
+  evento(_, LugarEvento, _),
+  evidencia(Evidencia, LugarEvento, _),
+  corresponde(Evidencia, Persona).
+
+/*
+* Objetivo: Determina si una persona se contradice sobre dónde estaba a la hora del evento
+* Entradas: Persona
+* Salidas: Verdadero si alguna contradicción cae dentro del intervalo del evento
+* Restricciones: Una contradicción en otra hora no cuenta como indicio
+*/
+contradiccion_en_evento(Persona) :-
+  contradiccion(Persona, _, HoraDicha, _, _),
+  en_intervalo_evento(HoraDicha).
+
+/*
+* Objetivo: Determina si existe algún indicio que vincule a la persona con el evento.
+* Entradas: Persona
+* Salidas: Verdadero si tiene evidencia en la escena o contradicción durante el evento.
+* Restricciones: Basta con uno de los dos
+*/
+indicio(Persona) :-
+  evidencia_en_escena(Persona, _).
+indicio(Persona) :-
+  contradiccion_en_evento(Persona).
+
+/*
+* Objetivo: Determina si una persona puede considerarse posible sospechosa
+* Entradas: Persona (sin instanciar devuelve cada persona una sola vez).
+* Salidas: Verdadero si cumple oportunidad e indicio
+* Restricciones: Requiere oportunidad (escena o acceso) y al menos un indicio (evidencia en la escena o contradicción durante el evento)
+*/
+posible_sospechoso(Persona) :-
+  persona(Persona),
+  once(oportunidad(Persona)),
+  once(indicio(Persona)).
