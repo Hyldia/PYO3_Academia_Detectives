@@ -3,6 +3,7 @@
 import tkinter as tk
 from ventanas.acceso import mostrar_accesos
 from ventanas.evidencias import mostar_evidencias
+from ventanas.sospechosos import mostrar_sospechosos
 
 # Colores
 COLOR_FONDO = "#F7E9E5"
@@ -46,6 +47,10 @@ boton_acceso.pack(fill="x", pady=15, padx=5)
 
 boton_evidencias = tk.Button(marco_menu, text="Consultar Evidencias", width=18, bg=COLOR_PRIMARIO, fg="white", font=("Segoe UI", 11, "bold"), command=lambda: mostar_evidencias(contenido))
 boton_evidencias.pack(fill="x", pady=15, padx=5)
+
+
+boton_sospechosos = tk.Button(marco_menu, text="Consultar Sospechosos", width=18, bg=COLOR_PRIMARIO, fg="white", font=("Segoe UI", 11, "bold"), command=lambda: mostrar_sospechosos(contenido))
+boton_sospechosos.pack(fill="x", pady=15, padx=5)
 
 # Espaciador
 tk.Label(marco_menu, bg=COLOR_PANEL).pack( expand=True, fill="both")
