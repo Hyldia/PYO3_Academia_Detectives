@@ -4,6 +4,8 @@
 
 /*
 * Objetivo: Determina si una persona estuvo registrada en un lugar determinado durante una hora específica.
+* Entradas: Persona, Lugar, Hora
+* Salidas: Verdadero si la persona estuvo en el lugar a la hora indicada según los registros.
 * CONSULTAR *
 */
 estuvo_en(Persona, Lugar, Hora) :-
@@ -11,6 +13,8 @@ estuvo_en(Persona, Lugar, Hora) :-
 
 /*
 * Objetivo: Determina si una persona tiene autorización para ingresar a un lugar.
+* Entradas: Persona, Lugar
+* Salidas: Verdadero si la persona tiene acceso directo o indirecto al lugar.
 */
 % Acceso directo
 tiene_acceso(Persona, Lugar) :-
@@ -23,6 +27,8 @@ tiene_acceso(Persona, Lugar) :-
 
 /*
 * Objetivo: Determina si una persona estuvo en un lugar en un intervalo de tiempo.
+* Entradas: Persona, Lugar, Inicio, Fin
+* Salidas: Verdadero si la persona estuvo en el lugar entre las horas Inicio y Fin
 */
 estuvo_en_intervalo(Persona, Lugar, Inicio, Fin) :-
   estuvo(Persona, Lugar, Hora),
@@ -31,6 +37,8 @@ estuvo_en_intervalo(Persona, Lugar, Inicio, Fin) :-
 
 /*
 * Objetivo: Determina cuáles evidencias del caso han sido relacionadas con una persona.
+* Entradas: Persona
+* Salidas: Lista de evidencias relacionadas con la persona
 */
 evidencias_de(Persona, Evidencias) :-
   findall(Evidencia,(corresponde(Evidencia, Persona), evidencia(Evidencia, _, _)), Evidencias).
@@ -224,3 +232,14 @@ posible_sospechoso(Persona) :-
   persona(Persona),
   once(oportunidad(Persona)),
   once(indicio(Persona)).
+
+/*
+* Objetivo: Determina si una persona puede ser descartada como posible responsable, una peronsa se descarta si tiene coartada y no estuvo en la escena y no tiene evidencia en la escena.
+* Entradas: Persona (sin instanciar devuelve cada persona una sola vez).
+* Salidas: Verdadero si no estuvo en la escena y no tiene evidencia en la escena
+*/
+descartar(Persona):-
+  persona(Persona),
+  tiene_coartada(Persona),
+  \+ estuvo_en_escena(Persona), % +/ = no estuvo en la escena
+  \+ evidencia_en_escena(Persona, _). % +/ = no tiene evidencia en la escena. _ = no importa cuál evidencia, basta con que no tenga ninguna

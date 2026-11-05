@@ -38,7 +38,7 @@ ubicado(expediente_secreto, sala_evidencias).
 
 % Accesos a lugares (Persona, Lugar)
 acceso(karina, laboratorio).
-acceso(diego, laboratorio).
+acceso(diego, oficina).
 acceso(karina, biblioteca).
 acceso(carlos, biblioteca).
 acceso(nicole, oficina).
