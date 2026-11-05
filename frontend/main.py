@@ -1,61 +1,53 @@
-# Ventana principla del proyecto
+# Ventana principal del proyecto
 
 import tkinter as tk
-from ventanas.acceso import mostrar_accesos
-from ventanas.evidencias import mostar_evidencias
-from ventanas.sospechosos import mostrar_sospechosos
+import traceback
+from tkinter import messagebox
 
-# Colores
-COLOR_FONDO = "#F7E9E5"
-COLOR_PANEL = "#FFF8F2"
-COLOR_PRIMARIO = "#6B4366"
-COLOR_SECUNDARIO = "#C592AD"
-COLOR_ACCION = "#E49DA1"
-COLOR_TEXTO = "#000000"
+# Si Prolog o pyswip fallan al cargar, se avisa en vez de cerrarse sin explicación
+try:
+    from ventanas.acceso import mostrar_accesos
+    from ventanas.estilos import ALTO_VENTANA, ANCHO_VENTANA, aplicar_estilos, mostrar_error
+    from ventanas.evidencias import mostrar_evidencias
+    from ventanas.navegacion import iniciar, ir_a
+    from ventanas.portada import mostrar_portada
+    from ventanas.resolver import mostrar_resolver
+    from ventanas.sospechosos import mostrar_sospechosos
+except Exception as error:
+    raiz = tk.Tk()
+    raiz.withdraw()
+    messagebox.showerror("Academia de Detectives", f"No se pudo iniciar el programa.\n\n{error}")
+    raise SystemExit(1)
+
+"""
+* Objetivo: Muestra una ventana cuando algo falla durante el uso del programa.
+* Entradas: Tipo, valor y traza del error, que entrega tkinter.
+* Salidas: Ninguna.
+* Restricciones: También imprime el detalle en la consola para poder revisarlo.
+"""
+def manejar_error(tipo, valor, traza):
+    traceback.print_exception(tipo, valor, traza)
+    mostrar_error(f"No se pudo completar la operación.\n\n{str(valor)[:220]}")
 
 ventana = tk.Tk()
 ventana.title("Academia de Detectives")
-# Abrir maximizada
-ventana.state("zoomed")
-# Tamaño mínimo permitido
-ventana.minsize(1200, 700)
-ventana.configure(bg=COLOR_FONDO)
 
-# Encabezado
-titulo = tk.Label(ventana, text="Academia de detectives", font=("Arial", 22, "bold"), bg=COLOR_FONDO, fg=COLOR_PRIMARIO)
-titulo.pack(pady=15)
+# Ventana de tamaño fijo y centrada en la pantalla
+ventana.resizable(False, False)
+x = (ventana.winfo_screenwidth() - ANCHO_VENTANA) // 2
+y = max((ventana.winfo_screenheight() - ALTO_VENTANA) // 2 - 30, 0)
+ventana.geometry(f"{ANCHO_VENTANA}x{ALTO_VENTANA}+{x}+{y}")
 
-# Contenedor principal
-contenedor = tk.Frame(ventana, bg=COLOR_FONDO)
-contenedor.pack(fill="both", expand=True, padx=20, pady=20)
+aplicar_estilos(ventana)
+ventana.report_callback_exception = manejar_error
 
-# Menu lateral
-marco_menu = tk.Frame(contenedor, bg=COLOR_PANEL, bd=2, relief="groove", width=200)
-marco_menu.pack(side="left", fill="y", padx=(0, 15))
+iniciar(ventana, {
+    "portada": mostrar_portada,
+    "accesos": mostrar_accesos,
+    "evidencias": mostrar_evidencias,
+    "sospechosos": mostrar_sospechosos,
+    "resolver": mostrar_resolver,
+})
 
-# Area dinamica
-contenido = tk.Frame(contenedor, bg=COLOR_PANEL, bd= 2, relief= "groove")
-contenido.pack(side="right", fill="both", expand=True)
-
-# Titulo del menu lateral
-titulo_menu = tk.Label(marco_menu, text="MENÚ", font=("Arial", 14, "bold"), bg=COLOR_PANEL, fg=COLOR_PRIMARIO)
-titulo_menu.pack(pady=20)
-
-# Botones
-boton_acceso = tk.Button(marco_menu, text = "Consultar Accesos", width=18, bg=COLOR_PRIMARIO, fg="white", font=("Segoe UI", 11, "bold"), command=lambda: mostrar_accesos(contenido))
-boton_acceso.pack(fill="x", pady=15, padx=5)
-
-boton_evidencias = tk.Button(marco_menu, text="Consultar Evidencias", width=18, bg=COLOR_PRIMARIO, fg="white", font=("Segoe UI", 11, "bold"), command=lambda: mostar_evidencias(contenido))
-boton_evidencias.pack(fill="x", pady=15, padx=5)
-
-
-boton_sospechosos = tk.Button(marco_menu, text="Consultar Sospechosos", width=18, bg=COLOR_PRIMARIO, fg="white", font=("Segoe UI", 11, "bold"), command=lambda: mostrar_sospechosos(contenido))
-boton_sospechosos.pack(fill="x", pady=15, padx=5)
-
-# Espaciador
-tk.Label(marco_menu, bg=COLOR_PANEL).pack( expand=True, fill="both")
-
-boton_salir = tk.Button(marco_menu, text="Salir", width=18, bg=COLOR_SECUNDARIO, fg="white", font=("Segoe UI", 11, "bold"), command=contenido.winfo_toplevel().destroy)
-boton_salir.pack(fill="x", pady=15, padx=15)
-
+ventana.after(0, lambda: ir_a("portada"))
 ventana.mainloop()

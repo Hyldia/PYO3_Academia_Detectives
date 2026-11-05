@@ -1,119 +1,113 @@
-import tkinter as tk
-from tkinter import ttk
-from consultas import (consultar_personas, consultar_evento, consultar_sospechosos, consultar_contradicciones,
-                       consultar_todas_contradicciones, consultar_coartada, consultar_inferencia)
+from consultas import (consultar_coartada, consultar_contradicciones, consultar_evento, consultar_inferencia, consultar_personas,
+                       consultar_sospechosos, consultar_todas_contradicciones)
+from ventanas.estilos import colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_lista, escribir, etiqueta, limpiar, mostrar_aviso
+from ventanas.navegacion import pantalla_seccion
 
 """
-* Objetivo: Convierte un valor booleano en el texto Sí o No
+* Objetivo: Convierte un valor booleano en el texto Sí o No.
+* Entradas: Valor booleano.
+* Salidas: El texto Sí o No.
+* Restricciones: Ninguna.
 """
 def si_no(valor):
     return "Sí" if valor else "No"
 
 """
-* Objetivo: Escribe el encabezado con los datos del evento del caso.
+* Objetivo: Muestra el análisis de inferencia de la persona seleccionada.
+* Entradas: Lista de personas y área de resultados.
+* Salidas: Ninguna; escribe el análisis en el área.
+* Restricciones: Debe haber una persona seleccionada.
 """
-def escribir_evento(resultado_texto):
-    evento = consultar_evento()
-    if evento:
-        nombre, lugar, hora, inicio, fin = evento
-        resultado_texto.insert(tk.END, f"Evento: {nombre} en {lugar} a las {hora} (se analiza de {inicio} a {fin})\n\n")
-
-"""
-* Objetivo: Muestra el análisis de inferencia de la persona seleccionada
-"""
-def analizar(combo_persona, resultado_texto):
-    resultado_texto.delete("1.0", tk.END) # Limpiar el contenido anterior
+def analizar(combo_persona, area):
     persona = combo_persona.get()
     if not persona:
-        resultado_texto.insert(tk.END, "Seleccione una persona.")
+        mostrar_aviso("Seleccione una persona para analizarla.")
         return
-    escribir_evento(resultado_texto)
+    limpiar(area)
     inferencia = consultar_inferencia(persona)
+    escribir(area, f"Análisis de {persona}\n", "titulo")
     if inferencia["sospechoso"]:
-        resultado_texto.insert(tk.END, f"Resultado: {persona} cumple las condiciones de posible sospechoso.\n\n")
+        escribir(area, " Cumple las condiciones de posible sospechoso \n", "alerta")
     else:
-        resultado_texto.insert(tk.END, f"Resultado: {persona} no cumple las condiciones de posible sospechoso.\n\n")
+        escribir(area, " No cumple las condiciones de posible sospechoso \n", "neutro")
 
-    resultado_texto.insert(tk.END, "Oportunidad:\n")
-    resultado_texto.insert(tk.END, f"• Estuvo en la escena durante el evento: {si_no(inferencia['en_escena'])}\n")
-    resultado_texto.insert(tk.END, f"• Tiene acceso al lugar del evento: {si_no(inferencia['acceso'])}\n\n")
+    escribir(area, "Oportunidad\n", "titulo")
+    escribir(area, f"• Estuvo en la escena durante el evento: {si_no(inferencia['en_escena'])}\n", "item")
+    escribir(area, f"• Tiene acceso al lugar del evento: {si_no(inferencia['acceso'])}\n", "item")
 
-    resultado_texto.insert(tk.END, "Indicios:\n")
+    escribir(area, "Indicios\n", "titulo")
     evidencias = ", ".join(inferencia["evidencias"]) if inferencia["evidencias"] else "ninguna"
-    resultado_texto.insert(tk.END, f"• Evidencias en la escena: {evidencias}\n")
-    resultado_texto.insert(tk.END, f"• Contradicción durante el evento: {si_no(inferencia['contradiccion_evento'])}\n\n")
+    escribir(area, f"• Evidencias en la escena: {evidencias}\n", "item")
+    escribir(area, f"• Contradicción durante el evento: {si_no(inferencia['contradiccion_evento'])}\n", "item")
 
+    escribir(area, "Coartada\n", "titulo")
     coartada = consultar_coartada(persona)
     if coartada:
         lugar, hora = coartada
-        resultado_texto.insert(tk.END, f"Coartada: declaró estar en {lugar} a las {hora} y el registro de movimientos lo respalda.\n\n")
+        escribir(area, f"• Declaró estar en {lugar} a las {hora} y el registro de movimientos lo respalda.\n", "item")
     else:
-        resultado_texto.insert(tk.END, "Coartada: no tiene una coartada válida.\n\n")
+        escribir(area, "• No tiene una coartada válida.\n", "item")
 
+    escribir(area, "Contradicciones\n", "titulo")
     contradicciones = consultar_contradicciones(persona)
     if contradicciones:
-        resultado_texto.insert(tk.END, "Contradicciones:\n")
         for lugar_dicho, hora_dicha, lugar_registro, hora_registro in contradicciones:
-            resultado_texto.insert(tk.END, f"• Dijo estar en {lugar_dicho} a las {hora_dicha}, pero según el registro estuvo en {lugar_registro} a las {hora_registro}.\n")
+            escribir(area, f"• Dijo estar en {lugar_dicho} a las {hora_dicha}, pero según el registro estuvo en {lugar_registro} a las {hora_registro}.\n", "item")
     else:
-        resultado_texto.insert(tk.END, "Contradicciones: ninguna.\n")
+        escribir(area, "• Ninguna.\n", "item")
 
 """
-* Objetivo: Muestra la lista de posibles sospechosos inferida por Prolog
+* Objetivo: Muestra la lista de posibles sospechosos inferida por Prolog.
+* Entradas: Área de resultados.
+* Salidas: Ninguna; escribe la lista en el área.
+* Restricciones: Ninguna.
 """
-def ver_sospechosos(resultado_texto):
-    resultado_texto.delete("1.0", tk.END)
-    escribir_evento(resultado_texto)
+def ver_sospechosos(area):
+    limpiar(area)
     sospechosos = consultar_sospechosos()
     if sospechosos:
-        resultado_texto.insert(tk.END, "Posibles sospechosos:\n\n")
+        escribir(area, "Posibles sospechosos\n", "titulo")
         for persona in sospechosos:
-            resultado_texto.insert(tk.END, f"• {persona}\n")
+            escribir(area, f"• {persona}\n", "item")
     else:
-        resultado_texto.insert(tk.END, "No se encontraron posibles sospechosos.")
+        escribir(area, "No se encontraron posibles sospechosos.")
 
 """
 * Objetivo: Muestra todas las contradicciones encontradas en el caso.
+* Entradas: Área de resultados.
+* Salidas: Ninguna; escribe las contradicciones en el área.
+* Restricciones: Ninguna.
 """
-def ver_contradicciones(resultado_texto):
-    resultado_texto.delete("1.0", tk.END)
+def ver_contradicciones(area):
+    limpiar(area)
     contradicciones = consultar_todas_contradicciones()
     if contradicciones:
-        resultado_texto.insert(tk.END, "Contradicciones encontradas en el caso:\n\n")
+        escribir(area, "Contradicciones encontradas en el caso\n", "titulo")
         for persona, lugar_dicho, hora_dicha, lugar_registro, hora_registro in contradicciones:
-            resultado_texto.insert(tk.END, f"• {persona}: dijo estar en {lugar_dicho} a las {hora_dicha}, pero según el registro estuvo en {lugar_registro} a las {hora_registro}.\n")
+            escribir(area, f"• {persona}: dijo estar en {lugar_dicho} a las {hora_dicha}, pero según el registro estuvo en {lugar_registro} a las {hora_registro}.\n", "item")
     else:
-        resultado_texto.insert(tk.END, "No se encontraron contradicciones.")
+        escribir(area, "No se encontraron contradicciones.")
 
 """
-* Objetivo: Muestra la ventana de análisis de sospechosos.
+* Objetivo: Muestra la sección de análisis de sospechosos.
+* Entradas: Contenedor.
+* Salidas: Ninguna.
+* Restricciones: Ninguna.
 """
-def mostrar_sospechosos(contenido):
-    for widget in contenido.winfo_children(): # Limpia el contenido anterior
-        widget.destroy()
+def mostrar_sospechosos(padre):
+    lienzo = pantalla_seccion(padre, "ANÁLISIS DE SOSPECHOSOS", "sospechosos")
 
-    titulo = tk.Label(contenido, text="Análisis de Sospechosos", font=("Arial", 16, "bold"), bg="#FFF8F2", fg="#493747")
-    titulo.pack(pady=10)
+    evento = consultar_evento()
+    if evento:
+        _, _, _, inicio, fin = evento
+        etiqueta(lienzo, 1045, 202, f"Intervalo: {inicio} a {fin}")
 
-    # Marco para la persona y los botones
-    marco_controles = tk.Frame(contenido, bg="#FFF8F2")
-    marco_controles.pack(pady=10)
+    etiqueta(lienzo, 290, 172, "Persona")
+    combo_persona = crear_lista(lienzo, consultar_personas())
+    colocar(lienzo, combo_persona, 290, 186, 170, 32)
 
-    # Las personas se leen de Prolog para que funcione con cualquier hechos.pl
-    combo_persona = ttk.Combobox(marco_controles, width=20, values=consultar_personas(), state="readonly")
-    combo_persona.grid(row=0, column=0, padx=5)
-
-    boton_analizar = tk.Button(marco_controles, text="Analizar persona", width=18, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: analizar(combo_persona, resultado_texto))
-    boton_analizar.grid(row=0, column=1, padx=5)
-
-    boton_sospechosos = tk.Button(marco_controles, text="Ver posibles sospechosos", width=22, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: ver_sospechosos(resultado_texto))
-    boton_sospechosos.grid(row=0, column=2, padx=5)
-
-    boton_contradicciones = tk.Button(marco_controles, text="Ver contradicciones", width=18, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: ver_contradicciones(resultado_texto))
-    boton_contradicciones.grid(row=0, column=3, padx=5)
-
-    boton_limpiar = tk.Button(marco_controles, text="Limpiar", width=12, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: resultado_texto.delete("1.0", tk.END))
-    boton_limpiar.grid(row=0, column=4, padx=5)
-
-    resultado_texto = tk.Text(contenido, width=90, height=20, bg="#FFF8F2", fg="#3F3540", font=("Consolas", 12), wrap="word")
-    resultado_texto.pack(pady=10, padx=20, fill="both", expand=True)
+    area = crear_area_resultado(lienzo, 290, 228, 935, 454)
+    colocar(lienzo, crear_boton(lienzo, "Analizar persona", lambda: analizar(combo_persona, area)), 470, 186, 140, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Sospechosos", lambda: ver_sospechosos(area)), 620, 186, 140, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Contradicciones", lambda: ver_contradicciones(area)), 770, 186, 140, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 920, 186, 110, 32)
