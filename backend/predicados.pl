@@ -371,3 +371,25 @@ investigar(Persona) :-
   mostrar_evidencias(Persona),
   mostrar_coartada(Persona),
   mostrar_contradicciones(Persona).
+
+% ===================================================
+% Posibles responsables
+
+/*
+* Objetivo: Determina si una persona es responsable válida: es posible sospechosa y no puede ser descartada
+* Entradas: Persona
+* Salidas: Verdadero si posible_sospechoso/1 se cumple y descartar/1 no
+* Restricciones: Comprueba que la conclusión sea consistente, es decir, que no exista un descarte para la persona
+*/
+responsable_valido(Persona) :-
+  posible_sospechoso(Persona),
+  \+ descartar(Persona).
+
+/*
+* Objetivo: Construye la lista de personas que pueden ser responsables del caso
+* Entradas: Ninguna
+* Salidas: Lista de personas que cumplen responsable_valido/1
+* Restricciones: Recorre las personas definidas con persona/1 y evalúa las reglas de investigación en cada una
+*/
+posibles_responsables(Lista) :-
+  findall(Persona, (persona(Persona), responsable_valido(Persona)), Lista).
