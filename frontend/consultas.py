@@ -8,24 +8,23 @@ prolog = Prolog()
 prolog.consult("../backend/predicados.pl")
 
 """
-* Objetivo:Consulta los lugares a los que tiene acceso una persona.
+* Objetivo: Consulta los lugares a los que tiene acceso una persona, sin repetidos.
 """
 def consultar_accesos(persona):
-    resultados =[]
-    # Busca en Prolog los lugares a los que tiene acceso la persona.
-    for resultado in prolog.query(f"tiene_acceso({persona}, Lugar)"):
-        resultados.append(resultado["Lugar"]) # Agrega a la lista el lugar del resultado actual.
-    return resultados
+    # setof devuelve la lista sin repetidos y falla si no hay lugares
+    resultado = list(prolog.query(f"setof(Lugar, tiene_acceso({persona}, Lugar), Lugares)", maxresult=1))
+    if resultado:
+        return resultado[0]["Lugares"]
+    return []
 
 """
-* Objetivo:Consulta las evidencias relacionadas con una persona.
+* Objetivo: Consulta las evidencias relacionadas con una persona.
 """
 def consultar_evidencias(persona):
-    resultado = []
-    # Busca en Prolog las evidencias relacionadas con la persona.
-    for evidencia in prolog.query(f"evidencias_de({persona}, Evidencia)"):
-        resultado.append(evidencia["Evidencia"]) # Agrega a la lista la evidencia del resultado actual.
-    return resultado
+    resultado = list(prolog.query(f"evidencias_de({persona}, Evidencias)", maxresult=1))
+    if resultado:
+        return resultado[0]["Evidencias"]
+    return []
 
 """
 * Objetivo:Consulta los movimientos de una persona en un lugar durante un periodo de tiempo.
@@ -115,3 +114,31 @@ def consultar_inferencia(persona):
         "evidencias": evidencias,
         "contradiccion_evento": se_cumple(f"contradiccion_en_evento({persona})"),
     }
+
+    
+"""
+* Objetivo: Consulta los lugares del caso.
+* Entradas: Ninguna.
+* Salidas: Lista de lugares.
+* Restricciones: Acepta lugar/1 y lugar/2, porque hechos.pl puede usar cualquiera.
+"""
+def consultar_lugares():
+    consulta = "findall(L, ((current_predicate(lugar/2), lugar(L, _)) ; (current_predicate(lugar/1), lugar(L))), Lugares)"
+    resultado = list(prolog.query(consulta, maxresult=1))
+    if resultado:
+        return resultado[0]["Lugares"]
+    return []
+
+"""
+* Objetivo: Ejecuta resolver_caso y devuelve el informe que imprime.
+* Entradas: Ninguna.
+* Salidas: El informe, o None si resolver_caso todavía no existe.
+* Restricciones: El informe lo arma Prolog; Python solo lo recibe.
+"""
+def consultar_resolucion():
+    if not se_cumple("current_predicate(resolver_caso/0)"):
+        return None
+    resultado = list(prolog.query("with_output_to(atom(Texto), resolver_caso)", maxresult=1))
+    if resultado:
+        return resultado[0]["Texto"]
+    return "No se pudo resolver el caso con la información disponible."

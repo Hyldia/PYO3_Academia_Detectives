@@ -1,41 +1,40 @@
-import tkinter as tk
-from tkinter import ttk
-from consultas import consultar_accesos
-    
-def consultar(combo_persona, resultado_texto): 
-    resultado_texto.delete("1.0", tk.END) # Limpiar enl contenido anterior
+from consultas import consultar_accesos, consultar_personas
+from ventanas.estilos import colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_lista, escribir, etiqueta, limpiar, mostrar_aviso
+from ventanas.navegacion import pantalla_seccion
+
+"""
+* Objetivo: Muestra los lugares a los que tiene acceso la persona seleccionada.
+* Entradas: Lista de personas y área de resultados.
+* Salidas: Ninguna; escribe los lugares en el área.
+* Restricciones: Debe haber una persona seleccionada.
+"""
+def consultar(combo_persona, area):
     persona = combo_persona.get()
     if not persona:
-        resultado_texto.insert(tk.END, "Seleccione una persona.")
+        mostrar_aviso("Seleccione una persona para consultar sus accesos.")
         return
+    limpiar(area)
     accesos = consultar_accesos(persona)
     if accesos:
-        resultado_texto.insert(tk.END,  f"{persona} tiene acceso a:\n\n")
+        escribir(area, f"{persona} tiene acceso a\n", "titulo")
         for lugar in accesos:
-            resultado_texto.insert(tk.END, f"• {lugar}\n")
+            escribir(area, f"• {lugar}\n", "item")
     else:
-        resultado_texto.insert(tk.END, f"{persona} no tiene accesos a ningun lugar.")
-        
-def mostrar_accesos(contenido):
-    # Limpia contenido anterior
-    for widget in contenido.winfo_children():
-        widget.destroy()
-    
-    titulo = tk.Label(contenido, text="Consulta de Accesos", font=("Arial", 16, "bold"), bg="#FFF8F2", fg="#493747")
-    titulo.pack(pady=10)
-    
-    combo_persona = ttk.Combobox(contenido, width=15, height=25, values=["karina", "carlos", "nicole", "diego", "andrey"])
-    combo_persona.pack(pady=5)
-    
-    resultado_texto = tk.Text(contenido, width=50, height=12, bg="#FFF8F2", fg="#3F3540", font=("Consolas", 12))
-    resultado_texto.pack(pady=15)
-    
-    # Marco para botones
-    marco_botones = tk.Frame(contenido)
-    marco_botones.pack(pady=10)
+        escribir(area, f"{persona} no tiene acceso a ningún lugar.")
 
-    boton_consultar = tk.Button(marco_botones, text="Consultar", width=15, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command= lambda: consultar(combo_persona, resultado_texto)) 
-    boton_consultar.grid(row=0, column=0, padx=5)
-    
-    boton_limpiar = tk.Button(marco_botones, text="Limpiar", width=15, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: resultado_texto.delete("1.0", tk.END))
-    boton_limpiar.grid(row=0, column=1, padx=5)
+"""
+* Objetivo: Muestra la sección de consulta de accesos.
+* Entradas: Contenedor.
+* Salidas: Ninguna.
+* Restricciones: Ninguna.
+"""
+def mostrar_accesos(padre):
+    lienzo = pantalla_seccion(padre, "CONSULTA DE ACCESOS", "accesos")
+
+    etiqueta(lienzo, 290, 172, "Persona")
+    combo_persona = crear_lista(lienzo, consultar_personas())
+    colocar(lienzo, combo_persona, 290, 186, 230, 32)
+
+    area = crear_area_resultado(lienzo, 290, 228, 935, 454)
+    colocar(lienzo, crear_boton(lienzo, "Consultar", lambda: consultar(combo_persona, area)), 535, 186, 140, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 690, 186, 110, 32)

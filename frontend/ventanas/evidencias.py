@@ -1,94 +1,86 @@
-import tkinter as tk
-from tkinter import ttk
-from consultas import consultar_evidencias, consultar_movimientos
+from consultas import consultar_evidencias, consultar_lugares, consultar_movimientos, consultar_personas
+from ventanas.estilos import (colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_entrada, crear_lista,
+                              escribir, etiqueta, limpiar, mostrar_aviso, mostrar_error)
+from ventanas.navegacion import pantalla_seccion
 
 """
-* Objetivo: Consulta las evidencias asociadas a una persona
+* Objetivo: Revisa que una hora tenga el formato HHMM.
+* Entradas: Texto escrito por la persona.
+* Salidas: Verdadero si la hora es válida.
+* Restricciones: Solo revisa el formato; no decide nada del caso.
 """
-def consultar(combo_persona, resultado_texto):
-    resultado_texto.delete("1.0", tk.END) # Limpiar el contenido anterior
+def hora_valida(texto):
+    return len(texto) == 4 and texto.isdigit() and int(texto[:2]) < 24 and int(texto[2:]) < 60
+
+"""
+* Objetivo: Muestra las evidencias asociadas a la persona seleccionada.
+* Entradas: Lista de personas y área de resultados.
+* Salidas: Ninguna; escribe las evidencias en el área.
+* Restricciones: Debe haber una persona seleccionada.
+"""
+def consultar(combo_persona, area):
     persona = combo_persona.get()
     if not persona:
-        resultado_texto.insert(tk.END, "Seleccione una persona.")
+        mostrar_aviso("Seleccione una persona para consultar sus evidencias.")
         return
+    limpiar(area)
     evidencias = consultar_evidencias(persona)
     if evidencias:
-        resultado_texto.insert(tk.END,  f"Evidencias asociadas a {persona}:\n\n")
+        escribir(area, f"Evidencias asociadas a {persona}\n", "titulo")
         for evidencia in evidencias:
-            resultado_texto.insert(tk.END, f"• {evidencia}\n")
+            escribir(area, f"• {evidencia}\n", "item")
     else:
-        resultado_texto.insert(tk.END, f"No se encontraron evidencias asociadas a {persona}.")
+        escribir(area, f"No se encontraron evidencias asociadas a {persona}.")
 
 """
-* Objetivo: Consulta los movimientos de una persona en un lugar durante un periodo de tiempo.
+* Objetivo: Consulta si una persona estuvo en un lugar durante un intervalo.
+* Entradas: Listas de persona y lugar, campos de hora y área de resultados.
+* Salidas: Ninguna; escribe la respuesta en el área.
+* Restricciones: Las horas deben estar en formato HHMM y el inicio no puede ser mayor que el fin.
 """
-def consultar_historial(combo_persona, combo_lugar, entrada_inicio, entrada_fin, resultado_texto):
+def consultar_historial(combo_persona, combo_lugar, entrada_inicio, entrada_fin, area):
     persona = combo_persona.get()
     lugar = combo_lugar.get()
-    inicio = entrada_inicio.get()
-    fin = entrada_fin.get()
+    inicio = entrada_inicio.get().strip()
+    fin = entrada_fin.get().strip()
     if not persona or not lugar or not inicio or not fin:
-        resultado_texto.delete("1.0", tk.END)
-        resultado_texto.insert(tk.END, "Por favor, complete todos los campos.")
+        mostrar_aviso("Seleccione la persona y el lugar, y escriba las dos horas.")
         return
-    resultado = consultar_movimientos(persona, lugar, inicio, fin)
-    resultado_texto.insert(tk.END, f"\n\n{resultado}")
+    if not hora_valida(inicio) or not hora_valida(fin):
+        mostrar_error("Las horas deben tener formato HHMM, por ejemplo 1930.", "HORA INVÁLIDA")
+        return
+    if int(inicio) > int(fin):
+        mostrar_error("La hora de inicio no puede ser mayor que la hora de fin.", "HORA INVÁLIDA")
+        return
+    escribir(area, "Movimientos\n", "titulo")
+    escribir(area, f"• {consultar_movimientos(persona, lugar, int(inicio), int(fin))}\n", "item")
 
 """
-* Objetivo: Muestra la ventana de consulta de evidencias.
-"""     
-def mostar_evidencias(contenido):
-    for widget in contenido.winfo_children(): # Limpia el contenido anterior
-        widget.destroy()
-        
-    titulo = tk.Label(contenido, text="Consulta de Evidencias", font=("Arial", 16, "bold"), bg="#FFF8F2", fg="#493747")
-    titulo.pack(pady=10)
-    
-    # contenedor principal
-    marco_principal = tk.Frame(contenido, bg="#FFF8F2")
-    marco_principal.pack(fill="both", expand=True, padx=20, pady=10)
-    
-    # Columna Izquierda
-    marco_izquierdo = tk.Frame(marco_principal, bg="#FFF8F2")
-    marco_izquierdo.pack(side="left", fill="both", expand=True, padx=20)
-    
-    combo_persona = ttk.Combobox(marco_izquierdo, width=20, values=["karina", "carlos", "nicole", "diego", "andrey"])
-    combo_persona.pack(pady=10)
-    
-    # Marco para botones
-    marco_botones = tk.Frame(marco_izquierdo, bg="#FFF8F2")
-    marco_botones.pack(pady=10)
-        
-    boton_consultar = tk.Button(marco_botones, text="Consultar", width=15, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command= lambda: consultar(combo_persona, resultado_texto))
-    boton_consultar.grid(row=0, column=0, padx=5)
-        
-    boton_limpiar = tk.Button(marco_botones, text="Limpiar", width=15, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: resultado_texto.delete("1.0", tk.END))
-    boton_limpiar.grid(row=0, column=1, padx=5)
-    
-    resultado_texto = tk.Text( marco_izquierdo, width=50, height=8, bg="#FFF8F2", fg="#3F3540", font=("Consolas", 12))
-    resultado_texto.pack(pady=10, fill="both", expand=True)
-    
-    #Columna derecha
-    marco_derecho = tk.Frame(marco_principal, bg="#FFF8F2")
-    marco_derecho.pack(side="right", fill="y", padx=20)
-    
-    # Contenido para la consulta de movimientos    
-    titulo_movimientos = tk.Label(marco_derecho, text="Consulta de Movimientos", font=("Arial", 16, "bold"), bg="#FFF8F2", fg="#493747")
-    titulo_movimientos.pack(pady=10)
-    
-    combo_lugar = ttk.Combobox(marco_derecho, width=15, values=["laboratorio", "biblioteca", "oficina", "sala_evidencias", "entrada"])
-    combo_lugar.pack(pady=10)
-    
-    label_inicio = tk.Label(marco_derecho, text=" Hora de Inicio (HHMM)", bg="#FFF8F2", fg="#493747")
-    label_inicio.pack()
-    entrada_inicio = tk.Entry(marco_derecho, width=10)
-    entrada_inicio.pack(pady=5)
-    
-    label_fin = tk.Label(marco_derecho, text=" Hora de fin (HHMM)", bg="#FFF8F2", fg="#493747")
-    label_fin.pack()
-    entrada_fin = tk.Entry(marco_derecho, width=10)
-    entrada_fin.pack(pady=5)
-    
-    boton_movimientos = tk.Button(marco_derecho, text="Consultar Movimientos", width=20, bg="#A35F6B", fg="white", font=("Segoe UI", 10, "bold"), command=lambda: consultar_historial(combo_persona, combo_lugar, entrada_inicio, entrada_fin, resultado_texto))
-    boton_movimientos.pack(pady=15)
-    
+* Objetivo: Muestra la sección de evidencias y movimientos.
+* Entradas: Contenedor.
+* Salidas: Ninguna.
+* Restricciones: Ninguna.
+"""
+def mostrar_evidencias(padre):
+    lienzo = pantalla_seccion(padre, "EVIDENCIAS Y MOVIMIENTOS", "evidencias")
+
+    etiqueta(lienzo, 290, 172, "Persona")
+    combo_persona = crear_lista(lienzo, consultar_personas())
+    colocar(lienzo, combo_persona, 290, 186, 150, 32)
+
+    etiqueta(lienzo, 600, 172, "Lugar")
+    combo_lugar = crear_lista(lienzo, consultar_lugares())
+    colocar(lienzo, combo_lugar, 600, 186, 160, 32)
+
+    etiqueta(lienzo, 768, 172, "Inicio")
+    entrada_inicio = crear_entrada(lienzo)
+    colocar(lienzo, entrada_inicio, 768, 186, 62, 32)
+
+    etiqueta(lienzo, 838, 172, "Fin")
+    entrada_fin = crear_entrada(lienzo)
+    colocar(lienzo, entrada_fin, 838, 186, 62, 32)
+
+    area = crear_area_resultado(lienzo, 290, 228, 935, 454)
+    colocar(lienzo, crear_boton(lienzo, "Ver evidencias", lambda: consultar(combo_persona, area)), 448, 186, 125, 32)
+    colocar(lienzo, crear_boton(lienzo, "Ver movimientos", lambda: consultar_historial(combo_persona, combo_lugar, entrada_inicio, entrada_fin, area)), 908, 186, 150, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 1066, 186, 90, 32)
