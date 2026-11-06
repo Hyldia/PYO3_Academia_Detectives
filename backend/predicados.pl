@@ -465,3 +465,65 @@ explicacion_(Persona, E) :-
   \+ responsable_valido(Persona),
   \+ descartar(Persona),
   E = 'CONCLUSION: no es responsable probable, pero no hay informacion suficiente para descartarla.'.
+
+
+% ===================================================
+% Resolver caso
+
+/*
+* Objetivo: Imprime el informe completo de una persona considerada responsable
+* Entradas: Persona
+* Salidas: Evidencias, ubicación relevante, accesos, coartada, contradicciones, justificación y validación
+* Restricciones: Solo debe llamarse con personas que están en posibles_responsables/1
+*/
+informe_responsable(Persona) :-
+  format("~n--- Responsable: ~w ---~n", [Persona]),
+  % 1. Evidencias relacionadas
+  mostrar_evidencias(Persona),
+  % 2. Ubicación y movimientos relevantes (en la escena o dentro del intervalo del evento)
+  format("Ubicacion y movimientos relevantes:~n"),
+  evento(_, LugarEvento, _),
+  intervalo_evento(Ini, Fin),
+  movimientos_de(Persona, Movs),
+  forall(( member(H-L, Movs),
+           once((L == LugarEvento ; (H >= Ini, H =< Fin))) ),
+         format("  - ~w a las ~w~n", [L, H])),
+  % 3. Accesos relevantes (al lugar del evento)
+  format("Accesos relevantes:~n"),
+  (  setof(M, motivo_acceso(Persona, LugarEvento, M), Ms)
+  -> forall(member(M, Ms), format("  - ~w~n", [M]))
+  ;  format("  (sin acceso al lugar del evento)~n")
+  ),
+  % 4. Coartadas y contradicciones
+  mostrar_coartada(Persona),
+  mostrar_contradicciones(Persona),
+  % 5. Justificación lógica
+  format("Justificacion logica:~n"),
+  forall(explicaciones(Persona, E), format("  * ~w~n", [E])),
+  % 6. Validación de la solución
+  (  responsable_valido(Persona)
+  -> format("Validacion: OK (oportunidad + indicio, sin descarte)~n")
+  ;  format("Validacion: FALLIDA~n")
+  ).
+
+/*
+* Objetivo: Ejecuta el proceso general de resolución del caso
+* Entradas: Ninguna
+* Salidas: Imprime el evento, los responsables con su informe y las personas descartadas
+* Restricciones: El caso debe tener un único evento; la conclusión se infiere con las reglas, no se almacena
+*/
+resolver_caso :-
+  evento(Nombre, Lugar, Hora),
+  intervalo_evento(Ini, Fin),
+  format("~n====== RESOLUCION DEL CASO ======~n"),
+  format("Evento: ~w en ~w a las ~w (intervalo analizado: ~w-~w)~n",
+         [Nombre, Lugar, Hora, Ini, Fin]),
+  posibles_responsables(Responsables),
+  (  Responsables == []
+  -> format("~nNo se encontraron responsables con la informacion disponible.~n")
+  ;  length(Responsables, N),
+     format("Posibles responsables (~w): ~w~n", [N, Responsables]),
+     forall(member(P, Responsables), informe_responsable(P))
+  ),
+  findall(D, (persona(D), descartar(D)), Descartados),
+  format("~nPersonas descartadas: ~w~n", [Descartados]).
