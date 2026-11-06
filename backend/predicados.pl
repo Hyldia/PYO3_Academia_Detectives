@@ -393,3 +393,75 @@ responsable_valido(Persona) :-
 */
 posibles_responsables(Lista) :-
   findall(Persona, (persona(Persona), responsable_valido(Persona)), Lista).
+
+% ===================================================
+% Explicaciones
+
+/*
+* Objetivo: Genera, por backtracking, explicaciones logicas sobre una persona
+* Entradas: Persona
+* Salidas: Explicacion construida a partir de los hechos y reglas
+* Restricciones: Cada explicación se infiere, no se almacena; al pedir más soluciones (;) devuelve una por una
+*/
+explicaciones(Persona, Explicacion) :-
+  persona(Persona),
+  explicacion_(Persona, Explicacion).
+
+% Estuvo en la escena durante el intervalo del evento
+explicacion_(Persona, E) :-
+  evento(_, Lugar, _),
+  intervalo_evento(Ini, Fin),
+  estuvo_en_intervalo(Persona, Lugar, Ini, Fin),
+  estuvo(Persona, Lugar, Hora),
+  Hora >= Ini, Hora =< Fin,
+  format(atom(E), 'Estuvo en ~w a las ~w, dentro del intervalo del evento (~w-~w).',
+         [Lugar, Hora, Ini, Fin]).
+
+% Acceso al lugar del evento
+explicacion_(Persona, E) :-
+  evento(_, Lugar, _),
+  motivo_acceso(Persona, Lugar, Motivo),
+  format(atom(E), 'Tenia ~w, lugar del evento.', [Motivo]).
+
+% Evidencia hallada en la escena
+explicacion_(Persona, E) :-
+  evidencia_en_escena(Persona, Evidencia),
+  evidencia(Evidencia, Lugar, Hora),
+  format(atom(E), 'La evidencia ~w, hallada en ~w a las ~w, le corresponde.',
+         [Evidencia, Lugar, Hora]).
+
+% Contradiccion durante el evento (es un indicio)
+explicacion_(Persona, E) :-
+  contradiccion(Persona, LD, HD, LR, HR),
+  en_intervalo_evento(HD),
+  format(atom(E), 'Se contradice durante el evento: dijo estar en ~w a las ~w, pero el registro dice ~w a las ~w.',
+         [LD, HD, LR, HR]).
+
+% Contradiccion fuera del evento (relevante, pero no es indicio)
+explicacion_(Persona, E) :-
+  contradiccion(Persona, LD, HD, LR, HR),
+  \+ en_intervalo_evento(HD),
+  format(atom(E), 'Tiene una contradiccion fuera del evento (dijo ~w a las ~w, registro ~w a las ~w); es relevante pero no lo ubica en la escena.',
+         [LD, HD, LR, HR]).
+
+% Coartada
+explicacion_(Persona, E) :-
+  coartada(Persona, Lugar, Hora),
+  format(atom(E), 'Tiene coartada: declara estar en ~w a las ~w y el registro lo respalda.',
+         [Lugar, Hora]).
+
+% Conclusion: responsable
+explicacion_(Persona, E) :-
+  responsable_valido(Persona),
+  E = 'CONCLUSION: es posible responsable (tiene oportunidad e indicio y no puede ser descartada).'.
+
+% Conclusion: descartada
+explicacion_(Persona, E) :-
+  descartar(Persona),
+  E = 'CONCLUSION: se descarta (tiene coartada, no estuvo en la escena y no tiene evidencia en ella).'.
+
+% Conclusion: ni responsable ni descartada
+explicacion_(Persona, E) :-
+  \+ responsable_valido(Persona),
+  \+ descartar(Persona),
+  E = 'CONCLUSION: no es responsable probable, pero no hay informacion suficiente para descartarla.'.
