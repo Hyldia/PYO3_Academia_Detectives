@@ -1,5 +1,5 @@
 from consultas import (consultar_coartada, consultar_contradicciones, consultar_evento, consultar_inferencia, consultar_personas,
-                       consultar_sospechosos, consultar_todas_contradicciones)
+                    consultar_sospechosos, consultar_todas_contradicciones)
 from ventanas.estilos import colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_lista, escribir, etiqueta, limpiar, mostrar_aviso
 from ventanas.navegacion import pantalla_seccion
 
