@@ -72,15 +72,15 @@ def mostrar_evidencias(padre):
     combo_lugar = crear_lista(lienzo, consultar_lugares())
     colocar(lienzo, combo_lugar, 600, 186, 160, 32)
 
-    etiqueta(lienzo, 768, 172, "Inicio")
+    etiqueta(lienzo, 768, 172, "Inicio HHMM")
     entrada_inicio = crear_entrada(lienzo)
     colocar(lienzo, entrada_inicio, 768, 186, 62, 32)
 
-    etiqueta(lienzo, 838, 172, "Fin")
+    etiqueta(lienzo, 860, 172, "Fin HHMM")
     entrada_fin = crear_entrada(lienzo)
-    colocar(lienzo, entrada_fin, 838, 186, 62, 32)
+    colocar(lienzo, entrada_fin, 855, 186, 62, 32)
 
     area = crear_area_resultado(lienzo, 290, 228, 935, 454)
     colocar(lienzo, crear_boton(lienzo, "Ver evidencias", lambda: consultar(combo_persona, area)), 448, 186, 125, 32)
-    colocar(lienzo, crear_boton(lienzo, "Ver movimientos", lambda: consultar_historial(combo_persona, combo_lugar, entrada_inicio, entrada_fin, area)), 908, 186, 150, 32)
-    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 1066, 186, 90, 32)
+    colocar(lienzo, crear_boton(lienzo, "Ver movimientos", lambda: consultar_historial(combo_persona, combo_lugar, entrada_inicio, entrada_fin, area)), 930, 186, 150, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 1088, 186, 90, 32)
