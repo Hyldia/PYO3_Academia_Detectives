@@ -21,6 +21,8 @@ tiene_acceso(Persona, Lugar) :-
   acceso(Persona, Lugar).
 % Acceso indirecto por medio de un objeto que se posee
 tiene_acceso(Persona, Lugar) :-
+  current_predicate(accesoPorObjeto/2), % Puede que no exista un acceso condicionado por un objeto en el caso
+  current_predicate(ubicado/2), % Puede que no se establezca donde se encuentra un objeto en el caso
   accesoPorObjeto(Lugar, Objeto),
   ubicado(Objeto, LugarObjeto),
   acceso(Persona, LugarObjeto).
@@ -277,11 +279,13 @@ motivo_acceso(Persona, Lugar, Motivo) :-
   acceso(Persona, Lugar),
   format(atom(Motivo), 'acceso directo a ~w', [Lugar]).
 motivo_acceso(Persona, Lugar, Motivo) :-
+  current_predicate(accesoPorObjeto/2), % Puede que no exista un acceso condicionado por un objeto en el caso
+  current_predicate(ubicado/2), % Puede que no se establezca donde se encuentra un objeto en el caso
   accesoPorObjeto(Lugar, Objeto),
   ubicado(Objeto, LugarObjeto),
   acceso(Persona, LugarObjeto),
   format(atom(Motivo), 'acceso a ~w mediante ~w (que esta en ~w, donde tiene acceso)',
-         [Lugar, Objeto, LugarObjeto]).
+        [Lugar, Objeto, LugarObjeto]).
 
 /*
 * Objetivo: Imprime los lugares donde estuvo una persona
@@ -352,9 +356,9 @@ mostrar_contradicciones(Persona) :-
   (  Cs == []
   -> format("Contradicciones: NO~n")
   ;  format("Contradicciones: SI~n"),
-     forall(member(LD-HD-LR-HR, Cs),
+    forall(member(LD-HD-LR-HR, Cs),
             format("  - Dijo estar en ~w a las ~w, pero el registro lo ubica en ~w a las ~w~n",
-                   [LD, HD, LR, HR]))
+                  [LD, HD, LR, HR]))
   ).
 
 /*
@@ -415,7 +419,7 @@ explicacion_(Persona, E) :-
   estuvo(Persona, Lugar, Hora),
   Hora >= Ini, Hora =< Fin,
   format(atom(E), 'Estuvo en ~w a las ~w, dentro del intervalo del evento (~w-~w).',
-         [Lugar, Hora, Ini, Fin]).
+        [Lugar, Hora, Ini, Fin]).
 
 % Acceso al lugar del evento
 explicacion_(Persona, E) :-
@@ -428,27 +432,27 @@ explicacion_(Persona, E) :-
   evidencia_en_escena(Persona, Evidencia),
   evidencia(Evidencia, Lugar, Hora),
   format(atom(E), 'La evidencia ~w, hallada en ~w a las ~w, le corresponde.',
-         [Evidencia, Lugar, Hora]).
+        [Evidencia, Lugar, Hora]).
 
 % Contradiccion durante el evento (es un indicio)
 explicacion_(Persona, E) :-
   contradiccion(Persona, LD, HD, LR, HR),
   en_intervalo_evento(HD),
   format(atom(E), 'Se contradice durante el evento: dijo estar en ~w a las ~w, pero el registro dice ~w a las ~w.',
-         [LD, HD, LR, HR]).
+        [LD, HD, LR, HR]).
 
 % Contradiccion fuera del evento (relevante, pero no es indicio)
 explicacion_(Persona, E) :-
   contradiccion(Persona, LD, HD, LR, HR),
   \+ en_intervalo_evento(HD),
   format(atom(E), 'Tiene una contradiccion fuera del evento (dijo ~w a las ~w, registro ~w a las ~w); es relevante pero no lo ubica en la escena.',
-         [LD, HD, LR, HR]).
+        [LD, HD, LR, HR]).
 
 % Coartada
 explicacion_(Persona, E) :-
   coartada(Persona, Lugar, Hora),
   format(atom(E), 'Tiene coartada: declara estar en ~w a las ~w y el registro lo respalda.',
-         [Lugar, Hora]).
+        [Lugar, Hora]).
 
 % Conclusion: responsable
 explicacion_(Persona, E) :-
@@ -486,8 +490,8 @@ informe_responsable(Persona) :-
   intervalo_evento(Ini, Fin),
   movimientos_de(Persona, Movs),
   forall(( member(H-L, Movs),
-           once((L == LugarEvento ; (H >= Ini, H =< Fin))) ),
-         format("  - ~w a las ~w~n", [L, H])),
+          once((L == LugarEvento ; (H >= Ini, H =< Fin))) ),
+        format("  - ~w a las ~w~n", [L, H])),
   % 3. Accesos relevantes (al lugar del evento)
   format("Accesos relevantes:~n"),
   (  setof(M, motivo_acceso(Persona, LugarEvento, M), Ms)
@@ -517,13 +521,13 @@ resolver_caso :-
   intervalo_evento(Ini, Fin),
   format("~n====== RESOLUCION DEL CASO ======~n"),
   format("Evento: ~w en ~w a las ~w (intervalo analizado: ~w-~w)~n",
-         [Nombre, Lugar, Hora, Ini, Fin]),
+        [Nombre, Lugar, Hora, Ini, Fin]),
   posibles_responsables(Responsables),
   (  Responsables == []
   -> format("~nNo se encontraron responsables con la informacion disponible.~n")
   ;  length(Responsables, N),
-     format("Posibles responsables (~w): ~w~n", [N, Responsables]),
-     forall(member(P, Responsables), informe_responsable(P))
+    format("Posibles responsables (~w): ~w~n", [N, Responsables]),
+    forall(member(P, Responsables), informe_responsable(P))
   ),
   findall(D, (persona(D), descartar(D)), Descartados),
   format("~nPersonas descartadas: ~w~n", [Descartados]).

@@ -3,6 +3,10 @@ from consultas import (consultar_clasificacion, consultar_coartada, consultar_co
                        consultar_investigacion, consultar_motivos_acceso, consultar_personas, consultar_recorrido)
 from ventanas.estilos import colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_lista, escribir, etiqueta, mostrar_aviso
 from ventanas.navegacion import ir_a, pantalla_seccion
+from consultas import (consultar_coartada, consultar_contradicciones, consultar_evento, consultar_inferencia, consultar_personas,
+                    consultar_sospechosos, consultar_todas_contradicciones)
+from ventanas.estilos import colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_lista, escribir, etiqueta, limpiar, mostrar_aviso
+from ventanas.navegacion import pantalla_seccion
 
 TARJETA_DECISION = 5
 TARJETA_RESULTADO = 6
