@@ -142,3 +142,37 @@ def consultar_resolucion():
     if resultado:
         return resultado[0]["Texto"]
     return "No se pudo resolver el caso con la información disponible."
+
+    
+"""
+* Objetivo: Ejecuta investigar en Prolog y devuelve el informe que imprime.
+* Entradas: Persona.
+* Salidas: El informe de la persona.
+* Restricciones: El informe lo arma Prolog; Python solo lo recibe.
+"""
+def consultar_investigacion(persona):
+    resultado = list(prolog.query(f"with_output_to(atom(Texto), investigar({persona}))", maxresult=1))
+    if resultado:
+        return resultado[0]["Texto"]
+    return f"No se encontró información de {persona}."
+
+"""
+* Objetivo: Consulta todas las explicaciones lógicas sobre una persona
+* Entradas: Persona.
+* Salidas: Lista de explicaciones
+* Restricciones: Cada explicación la genera Prolog por backtracking
+"""
+def consultar_explicaciones(persona):
+    explicaciones = []
+    for resultado in prolog.query(f"explicaciones({persona}, Explicacion)"):
+        explicaciones.append(resultado["Explicacion"])
+    return explicaciones
+
+"""
+* Objetivo: Consulta si una persona puede descartarse
+* Entradas: Persona
+* Salidas: Verdadero si Prolog la descarta
+* Restricciones: La decisión la toma Prolog
+"""
+def consultar_descarte(persona):
+    return se_cumple(f"descartar({persona})")
