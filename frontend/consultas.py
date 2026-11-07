@@ -176,3 +176,73 @@ def consultar_explicaciones(persona):
 """
 def consultar_descarte(persona):
     return se_cumple(f"descartar({persona})")
+
+
+"""
+* Objetivo: Consulta el recorrido de una persona.
+* Entradas: Persona.
+* Salidas: Lista de pares (hora, lugar) ordenada por hora.
+* Restricciones: Ninguna.
+"""
+def consultar_recorrido(persona):
+    recorrido = []
+    for r in prolog.query(f"estuvo({persona}, Lugar, Hora)"):
+        recorrido.append((r["Hora"], r["Lugar"]))
+    return sorted(recorrido)
+
+"""
+* Objetivo: Consulta cómo obtiene una persona acceso a cada lugar.
+* Entradas: Persona.
+* Salidas: Lista de motivos de acceso.
+* Restricciones: Los motivos los arma Prolog.
+"""
+def consultar_motivos_acceso(persona):
+    motivos = []
+    for r in prolog.query(f"motivo_acceso({persona}, Lugar, Motivo)"):
+        motivos.append(r["Motivo"])
+    return motivos
+
+"""
+* Objetivo: Consulta las evidencias de una persona con su lugar y hora.
+* Entradas: Persona.
+* Salidas: Lista de tuplas (evidencia, lugar, hora).
+* Restricciones: Ninguna.
+"""
+def consultar_detalle_evidencias(persona):
+    evidencias = []
+    for r in prolog.query(f"detalle_evidencia({persona}, Evidencia, Lugar, Hora)"):
+        evidencias.append((r["Evidencia"], r["Lugar"], r["Hora"]))
+    return evidencias
+
+"""
+* Objetivo: Consulta lo que una persona declaró.
+* Entradas: Persona.
+* Salidas: Lista de pares (lugar, hora).
+* Restricciones: Ninguna.
+"""
+def consultar_declaraciones(persona):
+    declaraciones = []
+    for r in prolog.query(f"declaracion({persona}, Lugar, Hora)"):
+        declaraciones.append((r["Lugar"], r["Hora"]))
+    return declaraciones
+
+"""
+* Objetivo: Consulta la clasificación que Prolog infiere para una persona.
+* Entradas: Persona.
+* Salidas: responsable, descartada o en_investigacion.
+* Restricciones: La decisión la toma Prolog.
+"""
+def consultar_clasificacion(persona):
+    resultado = list(prolog.query(f"clasificacion({persona}, Resultado)", maxresult=1))
+    if resultado:
+        return resultado[0]["Resultado"]
+    return "en_investigacion"
+
+"""
+* Objetivo: Consulta si la decisión del jugador coincide con la de Prolog.
+* Entradas: Persona y decisión.
+* Salidas: Verdadero si coincide.
+* Restricciones: La comparación la hace Prolog.
+"""
+def consultar_decision(persona, decision):
+    return se_cumple(f"decision_correcta({persona}, {decision})")

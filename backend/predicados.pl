@@ -527,3 +527,52 @@ resolver_caso :-
   ),
   findall(D, (persona(D), descartar(D)), Descartados),
   format("~nPersonas descartadas: ~w~n", [Descartados]).
+
+  
+% ===================================================
+% Expediente de investigacion
+
+/*
+* Objetivo: Obtiene los datos de una evidencia relacionada con una persona.
+* Entradas: Persona.
+* Salidas: Evidencia, Lugar y Hora donde se encontró.
+* Restricciones: El caso puede no relacionar evidencias con personas.
+*/
+detalle_evidencia(Persona, Evidencia, Lugar, Hora) :-
+  current_predicate(corresponde/2),
+  corresponde(Evidencia, Persona),
+  evidencia(Evidencia, Lugar, Hora).
+
+/*
+* Objetivo: Obtiene lo que una persona declaró en su testimonio.
+* Entradas: Persona.
+* Salidas: Lugar y Hora declarados.
+* Restricciones: El caso puede no traer testimonios.
+*/
+declaracion(Persona, Lugar, Hora) :-
+  current_predicate(testimonio/3),
+  testimonio(Persona, Lugar, Hora).
+
+/*
+* Objetivo: Clasifica a una persona según las reglas de investigación.
+* Entradas: Persona.
+* Salidas: Resultado (responsable, descartada o en_investigacion).
+* Restricciones: La clasificación se infiere; no existe como hecho.
+*/
+clasificacion(Persona, responsable) :-
+  responsable_valido(Persona).
+clasificacion(Persona, descartada) :-
+  descartar(Persona).
+clasificacion(Persona, en_investigacion) :-
+  persona(Persona),
+  \+ responsable_valido(Persona),
+  \+ descartar(Persona).
+
+/*
+* Objetivo: Determina si la decisión del jugador coincide con la inferencia del sistema.
+* Entradas: Persona y Decision
+* Salidas: Verdadero si la decisión coincide con clasificacion/2.
+* Restricciones: Decision debe ser responsable, descartada o en_investigacion
+*/
+decision_correcta(Persona, Decision) :-
+  clasificacion(Persona, Decision).
