@@ -2,11 +2,26 @@
 
 % Predicados
 
+% ===================================================
+% Auxiliares
+
+/*
+* Objetivo: Determina si un elemento pertenece a una lista (reemplazo propio de member/2, que viene de una librería)
+* Entradas: Elemento y Lista
+* Salidas: Verdadero si Elemento está en Lista; con Elemento sin instanciar devuelve cada elemento por backtracking
+* Restricciones: Lista debe ser una lista; no se permiten librerías adicionales de Prolog
+*/
+miembro(Elemento, [Elemento|_]).
+miembro(Elemento, [_|Resto]) :-
+  miembro(Elemento, Resto).
+
+% ===================================================
+% Consultas básicas
+
 /*
 * Objetivo: Determina si una persona estuvo registrada en un lugar determinado durante una hora específica.
 * Entradas: Persona, Lugar, Hora
 * Salidas: Verdadero si la persona estuvo en el lugar a la hora indicada según los registros.
-* CONSULTAR *
 */
 estuvo_en(Persona, Lugar, Hora) :-
   estuvo(Persona, Lugar, Hora).
@@ -43,13 +58,16 @@ estuvo_en_intervalo(Persona, Lugar, Inicio, Fin) :-
 * Salidas: Lista de evidencias relacionadas con la persona
 */
 evidencias_de(Persona, Evidencias) :-
-  findall(Evidencia,(corresponde(Evidencia, Persona), evidencia(Evidencia, _, _)), Evidencias).
+  current_predicate(corresponde/2),  % el caso puede no relacionar evidencias con personas
+  current_predicate(evidencia/3),    % el caso puede no traer evidencias
+  !,
+  findall(Evidencia, (corresponde(Evidencia, Persona), evidencia(Evidencia, _, _)), Evidencias).
+evidencias_de(_, []).
 
 
 % ===================================================
 % Sospechosos
 
-% Objetivo: Define cuántos minutos de diferencia se aceptan para considerar que dos horas son el mismo momento
 margen_minutos(10).
 
 /*
@@ -298,7 +316,7 @@ mostrar_lugares(Persona) :-
   format("Lugares donde estuvo:~n"),
   (  Movs == []
   -> format("  (sin registros)~n")
-  ;  forall(member(H-L, Movs), format("  - ~w a las ~w~n", [L, H]))
+  ;  forall(miembro(H-L, Movs), format("  - ~w a las ~w~n", [L, H]))
   ).
 
 /*
@@ -312,7 +330,7 @@ mostrar_accesos(Persona) :-
   format("Acceso a lugares:~n"),
   (  Lugares == []
   -> format("  (ninguno)~n")
-  ;  forall(member(L, Lugares),
+  ;  forall(miembro(L, Lugares),
             ( once(motivo_acceso(Persona, L, M)),
               format("  - ~w~n", [M]) ))
   ).
@@ -328,7 +346,7 @@ mostrar_evidencias(Persona) :-
   format("Evidencias relacionadas:~n"),
   (  Evs == []
   -> format("  (ninguna)~n")
-  ;  forall(member(E, Evs),
+  ;  forall(miembro(E, Evs),
             ( evidencia(E, L, H),
               format("  - ~w (hallada en ~w a las ~w)~n", [E, L, H]) ))
   ).
@@ -356,7 +374,7 @@ mostrar_contradicciones(Persona) :-
   (  Cs == []
   -> format("Contradicciones: NO~n")
   ;  format("Contradicciones: SI~n"),
-    forall(member(LD-HD-LR-HR, Cs),
+    forall(miembro(LD-HD-LR-HR, Cs),
             format("  - Dijo estar en ~w a las ~w, pero el registro lo ubica en ~w a las ~w~n",
                   [LD, HD, LR, HR]))
   ).
@@ -489,13 +507,13 @@ informe_responsable(Persona) :-
   evento(_, LugarEvento, _),
   intervalo_evento(Ini, Fin),
   movimientos_de(Persona, Movs),
-  forall(( member(H-L, Movs),
+  forall(( miembro(H-L, Movs),
           once((L == LugarEvento ; (H >= Ini, H =< Fin))) ),
         format("  - ~w a las ~w~n", [L, H])),
   % 3. Accesos relevantes (al lugar del evento)
   format("Accesos relevantes:~n"),
   (  setof(M, motivo_acceso(Persona, LugarEvento, M), Ms)
-  -> forall(member(M, Ms), format("  - ~w~n", [M]))
+  -> forall(miembro(M, Ms), format("  - ~w~n", [M]))
   ;  format("  (sin acceso al lugar del evento)~n")
   ),
   % 4. Coartadas y contradicciones
@@ -527,7 +545,7 @@ resolver_caso :-
   -> format("~nNo se encontraron responsables con la informacion disponible.~n")
   ;  length(Responsables, N),
     format("Posibles responsables (~w): ~w~n", [N, Responsables]),
-    forall(member(P, Responsables), informe_responsable(P))
+    forall(miembro(P, Responsables), informe_responsable(P))
   ),
   findall(D, (persona(D), descartar(D)), Descartados),
   format("~nPersonas descartadas: ~w~n", [Descartados]).
