@@ -544,12 +544,20 @@ resolver_caso :-
   posibles_responsables(Responsables),
   length(Responsables, N),
   format("~n----------------------------------------~n"),
-  format("  POSIBLES RESPONSABLES: ~w~n", [N]),
+  format("  SOSPECHOSOS: ~w~n", [N]),
   format("----------------------------------------~n~n"),
   (  Responsables == []
   -> format("  No se encontraron responsables con la informacion disponible.~n")
   ;  forall(miembro(P, Responsables), format("  - ~w~n", [P])),
     forall(miembro(P, Responsables), informe_responsable(P))
+  ),
+  findall(I, clasificacion(I, en_investigacion),  Investigacion),
+  format("~n----------------------------------------~n"),
+  format("  CONTINUAN EN INVESTIGACION~n"),
+  format("----------------------------------------~n~n"),
+  (iNVESTIGACION == []
+  -> format(" No hay personas que continuan bajo investigación.~n");
+  forall(miembro(I, Investigacion), format("  - ~w~n", [I]))
   ),
   findall(D, (persona(D), descartar(D)), Descartados),
   format("~n----------------------------------------~n"),
