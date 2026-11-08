@@ -13,17 +13,15 @@ def mostrar_portada(padre):
 
     # Placa clara para que el título se lea sobre el papel manchado
     placa(lienzo, 345, 222, 600, 118, (246, 235, 210, 235))
-    lienzo.create_text(645, 262, text="ACADEMIA DE DETECTIVES", font=("Impact", 36), fill=COLOR_ROJO)
+    lienzo.create_text(645, 256, text="ACADEMIA DE DETECTIVES", font=("Impact", 36), fill=COLOR_ROJO)
 
     evento = consultar_evento()
     if evento:
-        nombre, lugar, hora, _, _ = evento
-        lienzo.create_text(645, 312, text=f"Caso: {nombre}  ·  {lugar}  ·  {hora}", font=("Segoe UI", 12, "bold"), fill=COLOR_TEXTO)
+        nombre, lugar, hora, inicio, fin = evento
+        lienzo.create_text(645, 298, text=f"Caso: {nombre}  ·  {lugar}  ·  {hora}", font=("Segoe UI", 12, "bold"), fill=COLOR_TEXTO)
+        lienzo.create_text(645, 322, text=f"Intervalo que se analiza: {inicio} a {fin}", font=("Segoe UI", 10), fill=COLOR_TEXTO)
 
-    colocar(lienzo, crear_boton(lienzo, "Consultar Accesos", lambda: ir_a("accesos")), 445, 380, 200, 50)
-    colocar(lienzo, crear_boton(lienzo, "Consultar Ubicaciones", lambda: ir_a("ubicaciones")),  665, 380, 200, 50)
-    colocar(lienzo, crear_boton(lienzo, "Consultar Evidencias", lambda: ir_a("evidencias")), 445, 445, 200, 50)
-    colocar(lienzo, crear_boton(lienzo, "Consultar Sospechosos", lambda: ir_a("sospechosos")), 665, 445, 200, 50)
-    colocar(lienzo, crear_boton(lienzo, "Resolver Caso", lambda: ir_a("resolver")), 555, 520, 200, 50)
-    colocar(lienzo, crear_boton_kraft(lienzo, "Salir", padre.destroy), 555, 585, 200, 40)
-    
+    colocar(lienzo, crear_boton(lienzo, "Consultas", lambda: ir_a("accesos")), 445, 385, 200, 50)
+    colocar(lienzo, crear_boton(lienzo, "Expediente", lambda: ir_a("sospechosos")), 665, 385, 200, 50)
+    colocar(lienzo, crear_boton(lienzo, "Resolver caso", lambda: ir_a("resolver")), 555, 450, 200, 50)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Salir", padre.destroy), 555, 515, 200, 40)

@@ -15,18 +15,15 @@ def consultar(combo_persona, area):
         return
     limpiar(area)
     accesos = consultar_accesos(persona)
-    motivos = consultar_motivos_acceso(persona)
-    if accesos:
-        escribir(area, f"{persona} tiene acceso a\n", "titulo")
-        for lugar in accesos:
-            texto = f"• {lugar}" # Guarda el lugar al que tiene acceso
-            for motivo in motivos:
-                if f"acceso a {lugar}" in motivo:
-                    texto += f": {motivo}" # Agrega el motivo correspondiente al lugar
-                    break
-            escribir(area, f"{texto}\n", "item")
-    else:
+    if not accesos:
         escribir(area, f"{persona} no tiene acceso a ningún lugar.")
+        return
+    escribir(area, f"Lugares a los que {persona} tiene acceso\n", "titulo")
+    for lugar in accesos:
+        escribir(area, f"• {lugar}\n", "item")
+    escribir(area, "Cómo obtiene cada acceso\n", "titulo")
+    for motivo in consultar_motivos_acceso(persona):
+        escribir(area, f"• {motivo}.\n", "item")
 
 """
 * Objetivo: Muestra la sección de consulta de accesos.
@@ -37,10 +34,10 @@ def consultar(combo_persona, area):
 def mostrar_accesos(padre):
     lienzo = pantalla_seccion(padre, "CONSULTA DE ACCESOS", "accesos")
 
-    etiqueta(lienzo, 290, 172, "Persona")
+    etiqueta(lienzo, 290, 218, "Persona")
     combo_persona = crear_lista(lienzo, consultar_personas())
-    colocar(lienzo, combo_persona, 290, 186, 230, 32)
+    colocar(lienzo, combo_persona, 290, 232, 230, 32)
 
-    area = crear_area_resultado(lienzo, 290, 228, 935, 454)
-    colocar(lienzo, crear_boton(lienzo, "Consultar", lambda: consultar(combo_persona, area)), 535, 186, 140, 32)
-    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 690, 186, 110, 32)
+    area = crear_area_resultado(lienzo, 290, 278, 935, 404)
+    colocar(lienzo, crear_boton(lienzo, "Consultar", lambda: consultar(combo_persona, area)), 535, 232, 140, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 690, 232, 110, 32)
