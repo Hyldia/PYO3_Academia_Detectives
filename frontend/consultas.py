@@ -41,15 +41,15 @@ def consultar_evidencias(persona):
 def consultar_movimientos(persona, lugar, inicio, fin):
     consulta = list(prolog.query(f"estuvo_en_intervalo({persona}, {lugar}, {inicio}, {fin})")) # Convierte el resultado de la consulta en una lista.
     if consulta: 
-        return f"{persona} estuvo en {lugar} entre {inicio} y {fin}." # Retorna un mensaje indicando que la persona estuvo en el lugar durante el periodo especificado.
+        return f"{persona} estuvo en {lugar} entre {inicio:04d} y {fin:04d}." # Retorna un mensaje indicando que la persona estuvo en el lugar durante el periodo especificado.
     else:
-        return f"{persona} no estuvo en {lugar} entre {inicio} y {fin}." # Retorna un mensaje indicando que la persona no estuvo en el lugar durante el periodo especificado.
+        return f"{persona} no estuvo en {lugar} entre {inicio:04d} y {fin:04d}." # Retorna un mensaje indicando que la persona no estuvo en el lugar durante el periodo especificado.
 
 def consultar_estuvo(persona, lugar, hora):
     consulta = list( prolog.query(f"estuvo_en({persona}, {lugar}, {hora})"))
     if consulta:
-        return f"{persona} estuvo en {lugar} a las {hora}."
-    return f"{persona} no estuvo en {lugar} a las {hora}."
+        return f"{persona} estuvo en {lugar} a las {hora:04d}." # :04d -> Muestra los 4 digitos del formato HHMM y completa con ceros a la izquierda si es necesario.
+    return f"{persona} no estuvo en {lugar} a las {hora:04d}." # :04d -> Muestra los 4 digitos del formato HHMM y completa con ceros a la izquierda si es necesario.
 
 # Interfaz de sospechosos
 
