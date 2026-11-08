@@ -32,10 +32,10 @@ def consultar(combo_persona, area):
 def mostrar_evidencias(padre):
     lienzo = pantalla_seccion(padre, "CONSULTA DE EVIDENCIAS", "evidencias")
 
-    etiqueta(lienzo, 290, 172, "Persona")
+    etiqueta(lienzo, 290, 218, "Persona")
     combo_persona = crear_lista(lienzo, consultar_personas())
-    colocar(lienzo, combo_persona, 290, 186, 150, 32)
+    colocar(lienzo, combo_persona, 290, 232, 230, 32)
 
-    area = crear_area_resultado(lienzo, 290, 228, 935, 454)
-    colocar(lienzo, crear_boton(lienzo, "Ver evidencias", lambda: consultar(combo_persona, area)), 448, 186, 125, 32)
-    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 600, 186, 90, 32)
+    area = crear_area_resultado(lienzo, 290, 278, 935, 404)
+    colocar(lienzo, crear_boton(lienzo, "Ver evidencias", lambda: consultar(combo_persona, area)), 535, 232, 140, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 690, 232, 110, 32)

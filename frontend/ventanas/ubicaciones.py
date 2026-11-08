@@ -1,5 +1,5 @@
 from consultas import (consultar_estuvo, consultar_movimientos, consultar_personas, consultar_lugares)
-from ventanas.estilos import (colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_entrada, crear_lista,
+from ventanas.estilos import (COLOR_CAFE, colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_entrada, crear_lista,
                             escribir, etiqueta, limpiar, mostrar_aviso, mostrar_error)
 from ventanas.navegacion import pantalla_seccion
 
@@ -59,7 +59,7 @@ def consultar_por_intervalo(combo_persona, combo_lugar, entrada_inicio, entrada_
     limpiar(area)
     escribir(area, consultar_movimientos(persona, lugar, int(inicio), int(fin)))
     
-    """
+"""
 * Objetivo: Decide automáticamente qué consulta ejecutar.
 * Entradas: Persona, lugares, horas y área de resultados.
 * Salidas: Muestra el resultado correspondiente.
@@ -91,39 +91,34 @@ def consultar(combo_persona, combo_lugar_1, entrada_hora, combo_lugar_2, entrada
 * Salidas: Ninguna.
 * Restricciones: Ninguna.
 """
-def mostrar_ubicaciones(ubicacion):
-    lienzo = pantalla_seccion(ubicacion, "CONSULTA DE UBICACIONES", "ubicaciones")
-    etiqueta(lienzo, 600, 180, "Persona")
-    combo_persona = crear_lista(lienzo, consultar_personas())
-    colocar(lienzo, combo_persona, 520, 205, 220, 32)
-    # Columan izquierda
-    etiqueta(lienzo, 350, 280, "Ubicación exacta")
-    
-    etiqueta(lienzo, 350, 315, "Lugar")
-    combo_lugar_1 = crear_lista(lienzo, consultar_lugares())
-    colocar(lienzo, combo_lugar_1, 350, 335, 200, 32)
+def mostrar_ubicaciones(padre):
+    lienzo = pantalla_seccion(padre, "CONSULTA DE UBICACIONES", "ubicaciones")
 
-    etiqueta(lienzo, 380, 395, "Hora (HHMM)")
+    etiqueta(lienzo, 290, 218, "Persona")
+    combo_persona = crear_lista(lienzo, consultar_personas())
+    colocar(lienzo, combo_persona, 290, 232, 230, 32)
+
+    # Columna izquierda: ubicación a una hora exacta
+    lienzo.create_text(290, 292, text="Ubicación a una hora exacta", anchor="w", font=("Segoe UI", 11, "bold"), fill=COLOR_CAFE)
+    etiqueta(lienzo, 290, 318, "Lugar")
+    combo_lugar_hora = crear_lista(lienzo, consultar_lugares())
+    colocar(lienzo, combo_lugar_hora, 290, 332, 200, 32)
+    etiqueta(lienzo, 505, 318, "Hora (HHMM)")
     entrada_hora = crear_entrada(lienzo)
-    colocar(lienzo, entrada_hora, 380, 410, 110, 32)
-    
-    
-    #Columna derecha
-    etiqueta(lienzo, 720, 280, "Movimientos en un intervalo")
-    
-    etiqueta(lienzo, 720, 315, "Lugar")
-    combo_lugar_2 = crear_lista(lienzo, consultar_lugares())
-    colocar(lienzo, combo_lugar_2, 720, 335, 200, 32)
-    
-    etiqueta(lienzo, 720, 395, "Inicio (HHMM)")
+    colocar(lienzo, entrada_hora, 505, 332, 110, 32)
+
+    # Columna derecha: movimientos en un intervalo
+    lienzo.create_text(700, 292, text="Movimientos en un intervalo", anchor="w", font=("Segoe UI", 11, "bold"), fill=COLOR_CAFE)
+    etiqueta(lienzo, 700, 318, "Lugar")
+    combo_lugar_intervalo = crear_lista(lienzo, consultar_lugares())
+    colocar(lienzo, combo_lugar_intervalo, 700, 332, 200, 32)
+    etiqueta(lienzo, 915, 318, "Inicio (HHMM)")
     entrada_inicio = crear_entrada(lienzo)
-    colocar(lienzo, entrada_inicio, 720, 410, 90, 32)
-    
-    etiqueta(lienzo, 840, 395, "Fin (HHMM)")
+    colocar(lienzo, entrada_inicio, 915, 332, 100, 32)
+    etiqueta(lienzo, 1030, 318, "Fin (HHMM)")
     entrada_fin = crear_entrada(lienzo)
-    colocar(lienzo, entrada_fin, 840, 410, 90, 32)
-    
-    # Resultados
-    area = crear_area_resultado(lienzo, 290, 460, 935, 220)
-    colocar(lienzo, crear_boton(lienzo, "Consultar", lambda: consultar(combo_persona, combo_lugar_1, entrada_hora, combo_lugar_2, entrada_inicio, entrada_fin, area)), 1040, 240, 150, 40)
-    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 1040, 300, 150, 40)
+    colocar(lienzo, entrada_fin, 1030, 332, 100, 32)
+
+    area = crear_area_resultado(lienzo, 290, 380, 935, 302)
+    colocar(lienzo, crear_boton(lienzo, "Consultar", lambda: consultar(combo_persona, combo_lugar_hora, entrada_hora, combo_lugar_intervalo, entrada_inicio, entrada_fin, area)), 535, 232, 140, 32)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Limpiar", lambda: limpiar(area)), 690, 232, 110, 32)
