@@ -1,4 +1,3 @@
-
 % HEHCOS
 /*
 Contexto del caso: El Robo del Expediente Secreto
@@ -19,12 +18,12 @@ persona(nicole).
 persona(diego).
 persona(andrey). 
 
-% Lugares
-lugar(laboratorio).
-lugar(biblioteca).
-lugar(oficina).
-lugar(sala_evidencias).
-lugar(entrada).
+% Lugares (Nombre, Descripcion)
+lugar(laboratorio, "Laboratorio de la Academia de Detectives.").
+lugar(biblioteca, "Biblioteca de la Academia de Detectives.").
+lugar(oficina, "Oficina administrativa de la Academia.").
+lugar(sala_evidencias, "Sala de Evidencias donde se resguarda el expediente secreto.").
+lugar(entrada, "Entrada principal del edificio.").
 
 % Objetos
 objeto(tarjeta_maestra).
@@ -38,7 +37,7 @@ ubicado(expediente_secreto, sala_evidencias).
 
 % Accesos a lugares (Persona, Lugar)
 acceso(karina, laboratorio).
-acceso(diego, laboratorio).
+acceso(diego, oficina).
 acceso(karina, biblioteca).
 acceso(carlos, biblioteca).
 acceso(nicole, oficina).
@@ -94,4 +93,3 @@ testimonio(nicole, oficina, 2000).
 % testimonio(diego, laboratorio, 2000)
 testimonio(diego, biblioteca, 2000).
 testimonio(andrey, sala_evidencias, 1900).
-

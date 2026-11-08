@@ -13,6 +13,7 @@ try:
     from ventanas.portada import mostrar_portada
     from ventanas.resolver import mostrar_resolver
     from ventanas.sospechosos import mostrar_sospechosos
+    from ventanas.ubicaciones import mostrar_ubicaciones
 except Exception as error:
     raiz = tk.Tk()
     raiz.withdraw()
@@ -44,6 +45,7 @@ ventana.report_callback_exception = manejar_error
 iniciar(ventana, {
     "portada": mostrar_portada,
     "accesos": mostrar_accesos,
+    "ubicaciones": mostrar_ubicaciones,
     "evidencias": mostrar_evidencias,
     "sospechosos": mostrar_sospechosos,
     "resolver": mostrar_resolver,
