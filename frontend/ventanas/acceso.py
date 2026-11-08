@@ -1,4 +1,4 @@
-from consultas import consultar_accesos, consultar_personas
+from consultas import consultar_accesos, consultar_personas, consultar_motivos_acceso
 from ventanas.estilos import colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_lista, escribir, etiqueta, limpiar, mostrar_aviso
 from ventanas.navegacion import pantalla_seccion
 
@@ -15,10 +15,16 @@ def consultar(combo_persona, area):
         return
     limpiar(area)
     accesos = consultar_accesos(persona)
+    motivos = consultar_motivos_acceso(persona)
     if accesos:
         escribir(area, f"{persona} tiene acceso a\n", "titulo")
         for lugar in accesos:
-            escribir(area, f"• {lugar}\n", "item")
+            texto = f"• {lugar}" # Guarda el lugar al que tiene acceso
+            for motivo in motivos:
+                if f"acceso a {lugar}" in motivo:
+                    texto += f": {motivo}" # Agrega el motivo correspondiente al lugar
+                    break
+            escribir(area, f"{texto}\n", "item")
     else:
         escribir(area, f"{persona} no tiene acceso a ningún lugar.")
 
