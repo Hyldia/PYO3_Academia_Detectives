@@ -429,6 +429,7 @@ explicaciones(Persona, Explicacion) :-
   persona(Persona),
   explicacion_(Persona, Explicacion).
 
+
 % Estuvo en la escena durante el intervalo del evento
 explicacion_(Persona, E) :-
   evento(_, Lugar, _),
@@ -436,57 +437,52 @@ explicacion_(Persona, E) :-
   estuvo_en_intervalo(Persona, Lugar, Ini, Fin),
   estuvo(Persona, Lugar, Hora),
   Hora >= Ini, Hora =< Fin,
-  format(atom(E), 'Estuvo en ~w a las ~w, dentro del intervalo del evento (~w-~w).',
-        [Lugar, Hora, Ini, Fin]).
+  E = 'ESCENA:\nEl registro de movimientos ubica a la persona en el lugar del evento durante el intervalo analizado (la hora del evento mas/menos el margen permitido).\nEsto significa que estuvo en la escena mientras ocurria el hecho, lo cual le da oportunidad directa de participar.'.
 
 % Acceso al lugar del evento
 explicacion_(Persona, E) :-
   evento(_, Lugar, _),
-  motivo_acceso(Persona, Lugar, Motivo),
-  format(atom(E), 'Tenia ~w, lugar del evento.', [Motivo]).
+  motivo_acceso(Persona, Lugar, _),
+  E = 'ACCESO:\nLa persona tenia autorizacion para ingresar al lugar del evento, ya sea porque tiene acceso directo a el o porque tiene acceso al lugar donde esta el objeto que abre esa puerta.\nEsto significa que contaba con los medios para entrar a la escena, aunque no haya quedado registrada alli.'.
 
 % Evidencia hallada en la escena
 explicacion_(Persona, E) :-
   evidencia_en_escena(Persona, Evidencia),
-  evidencia(Evidencia, Lugar, Hora),
-  format(atom(E), 'La evidencia ~w, hallada en ~w a las ~w, le corresponde.',
-        [Evidencia, Lugar, Hora]).
+  evidencia(Evidencia, _, _),
+  E = 'EVIDENCIA:\nUna evidencia hallada en el lugar del evento esta relacionada con la persona.\nEsto significa que existe una prueba material que la vincula directamente con la escena, lo cual cuenta como indicio en su contra.'.
 
 % Contradiccion durante el evento (es un indicio)
 explicacion_(Persona, E) :-
-  contradiccion(Persona, LD, HD, LR, HR),
+  contradiccion(Persona, _, HD, _, _),
   en_intervalo_evento(HD),
-  format(atom(E), 'Se contradice durante el evento: dijo estar en ~w a las ~w, pero el registro dice ~w a las ~w.',
-        [LD, HD, LR, HR]).
+  E = 'CONTRADICCION EN EL EVENTO:\nEl testimonio de la persona dice que estaba en un lugar, pero el registro de movimientos la ubica en otro a la misma hora (dentro del margen permitido), y esa hora cae dentro del intervalo del evento.\nEsto significa que su version es incompatible con los registros justo en el momento clave, por lo que cuenta como indicio en su contra.'.
 
 % Contradiccion fuera del evento (relevante, pero no es indicio)
 explicacion_(Persona, E) :-
-  contradiccion(Persona, LD, HD, LR, HR),
+  contradiccion(Persona, _, HD, _, _),
   \+ en_intervalo_evento(HD),
-  format(atom(E), 'Tiene una contradiccion fuera del evento (dijo ~w a las ~w, registro ~w a las ~w); es relevante pero no lo ubica en la escena.',
-        [LD, HD, LR, HR]).
+  E = 'CONTRADICCION FUERA DEL EVENTO:\nEl testimonio de la persona no coincide con el registro de movimientos, pero la hora de la contradiccion queda fuera del intervalo del evento.\nEsto significa que es un dato relevante para la investigacion (su testimonio no es del todo confiable), pero no cuenta como indicio porque no la ubica en la escena durante el hecho.'.
 
 % Coartada
 explicacion_(Persona, E) :-
-  coartada(Persona, Lugar, Hora),
-  format(atom(E), 'Tiene coartada: declara estar en ~w a las ~w y el registro lo respalda.',
-        [Lugar, Hora]).
+  coartada(Persona, _, _),
+  E = 'COARTADA:\nLa persona declaro estar en un lugar distinto al del evento a la hora en que ocurrio, el registro de movimientos respalda ese testimonio y ningun registro la ubica en la escena durante el evento.\nEsto significa que existe una version coherente que la deja fuera del lugar del hecho.'.
 
 % Conclusion: responsable
 explicacion_(Persona, E) :-
   responsable_valido(Persona),
-  E = 'CONCLUSION: es posible responsable (tiene oportunidad e indicio y no puede ser descartada).'.
+  E = 'CONCLUSION:\nPOSIBLE RESPONSABLE: La persona es sospechosa porque cumple tres condiciones:\n(1) tuvo oportunidad, pues estuvo en la escena durante el evento o tiene acceso a ella;\n(2) existe al menos un indicio, ya sea una evidencia hallada en la escena o una contradiccion durante el evento;\n(3) no puede descartarse, pues no cumple las condiciones de descarte (coartada respaldada por los registros, sin presencia ni evidencia en la escena).'.
 
 % Conclusion: descartada
 explicacion_(Persona, E) :-
   descartar(Persona),
-  E = 'CONCLUSION: se descarta (tiene coartada, no estuvo en la escena y no tiene evidencia en ella).'.
+  E = 'CONCLUSION:\nDESCARTADA: La persona se descarta porque cumple tres condiciones:\n(1) tiene coartada, su testimonio la ubica en otro lugar a la hora del evento y el registro de movimientos lo respalda;\n(2) ningun registro la ubica en la escena durante el intervalo del evento;\n(3) ninguna evidencia hallada en la escena le corresponde.\nPor lo tanto, la informacion disponible es incompatible con que haya participado.'.
 
 % Conclusion: ni responsable ni descartada
 explicacion_(Persona, E) :-
   \+ responsable_valido(Persona),
   \+ descartar(Persona),
-  E = 'CONCLUSION: no es responsable probable, pero no hay informacion suficiente para descartarla.'.
+  E = 'CONCLUSION:\nEN INVESTIGACION: La persona no es una responsable probable porque le falta oportunidad (no estuvo en la escena ni tiene acceso a ella) o un indicio (ninguna evidencia en la escena ni contradiccion durante el evento).\nAun asi no se descarta, pues no cumple todas las condiciones de descarte (coartada respaldada, sin presencia ni evidencia en la escena).\nLa informacion disponible no alcanza para cerrar su caso.'.
 
 
 % ===================================================
@@ -499,11 +495,13 @@ explicacion_(Persona, E) :-
 * Restricciones: Solo debe llamarse con personas que están en posibles_responsables/1
 */
 informe_responsable(Persona) :-
-  format("~n--- Responsable: ~w ---~n", [Persona]),
+  format("~n========================================~n"),
+  format("POSIBLE RESPONSABLE: ~w~n", [Persona]),
+  format("========================================~n~n"),
   % 1. Evidencias relacionadas
   mostrar_evidencias(Persona),
   % 2. Ubicación y movimientos relevantes (en la escena o dentro del intervalo del evento)
-  format("Ubicacion y movimientos relevantes:~n"),
+  format("~nUbicacion y movimientos relevantes:~n"),
   evento(_, LugarEvento, _),
   intervalo_evento(Ini, Fin),
   movimientos_de(Persona, Movs),
@@ -511,17 +509,18 @@ informe_responsable(Persona) :-
           once((L == LugarEvento ; (H >= Ini, H =< Fin))) ),
         format("  - ~w a las ~w~n", [L, H])),
   % 3. Accesos relevantes (al lugar del evento)
-  format("Accesos relevantes:~n"),
+  format("~nAccesos relevantes:~n"),
   (  setof(M, motivo_acceso(Persona, LugarEvento, M), Ms)
   -> forall(miembro(M, Ms), format("  - ~w~n", [M]))
   ;  format("  (sin acceso al lugar del evento)~n")
   ),
   % 4. Coartadas y contradicciones
+  nl,
   mostrar_coartada(Persona),
   mostrar_contradicciones(Persona),
   % 5. Justificación lógica
-  format("Justificacion logica:~n"),
-  forall(explicaciones(Persona, E), format("  * ~w~n", [E])),
+  format("~nJustificacion logica:~n~n"),
+  forall(explicaciones(Persona, E), format("~w~n~n", [E])),
   % 6. Validación de la solución
   (  responsable_valido(Persona)
   -> format("Validacion: OK (oportunidad + indicio, sin descarte)~n")
@@ -537,18 +536,29 @@ informe_responsable(Persona) :-
 resolver_caso :-
   evento(Nombre, Lugar, Hora),
   intervalo_evento(Ini, Fin),
-  format("~n====== RESOLUCION DEL CASO ======~n"),
-  format("Evento: ~w en ~w a las ~w (intervalo analizado: ~w-~w)~n",
+  format("~n========================================~n"),
+  format("         RESOLUCION DEL CASO~n"),
+  format("========================================~n~n"),
+  format("  Evento:    ~w~n  Lugar:     ~w~n  Hora:      ~w~n  Intervalo: ~w - ~w~n",
         [Nombre, Lugar, Hora, Ini, Fin]),
   posibles_responsables(Responsables),
+  length(Responsables, N),
+  format("~n----------------------------------------~n"),
+  format("  POSIBLES RESPONSABLES: ~w~n", [N]),
+  format("----------------------------------------~n~n"),
   (  Responsables == []
-  -> format("~nNo se encontraron responsables con la informacion disponible.~n")
-  ;  length(Responsables, N),
-    format("Posibles responsables (~w): ~w~n", [N, Responsables]),
+  -> format("  No se encontraron responsables con la informacion disponible.~n")
+  ;  forall(miembro(P, Responsables), format("  - ~w~n", [P])),
     forall(miembro(P, Responsables), informe_responsable(P))
   ),
   findall(D, (persona(D), descartar(D)), Descartados),
-  format("~nPersonas descartadas: ~w~n", [Descartados]).
+  format("~n----------------------------------------~n"),
+  format("  PERSONAS DESCARTADAS~n"),
+  format("----------------------------------------~n~n"),
+  (  Descartados == []
+  -> format("  No hay personas descartadas con la informacion disponible.~n")
+  ;  forall(miembro(D, Descartados), format("  - ~w~n", [D]))
+  ).
 
   
 % ===================================================
