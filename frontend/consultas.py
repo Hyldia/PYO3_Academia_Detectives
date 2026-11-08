@@ -45,6 +45,11 @@ def consultar_movimientos(persona, lugar, inicio, fin):
     else:
         return f"{persona} no estuvo en {lugar} entre {inicio} y {fin}." # Retorna un mensaje indicando que la persona no estuvo en el lugar durante el periodo especificado.
 
+def consultar_estuvo(persona, lugar, hora):
+    consulta = list( prolog.query(f"estuvo_en({persona}, {lugar}, {hora})"))
+    if consulta:
+        return f"{persona} estuvo en {lugar} a las {hora}."
+    return f"{persona} no estuvo en {lugar} a las {hora}."
 
 # Interfaz de sospechosos
 

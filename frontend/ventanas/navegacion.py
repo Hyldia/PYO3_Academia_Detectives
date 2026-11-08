@@ -4,6 +4,7 @@ from ventanas.estilos import COLOR_ACENTO, COLOR_TARJETA, colocar, crear_boton, 
 MENU = [
     ("Inicio", "portada"),
     ("Accesos", "accesos"),
+    ("Ubicaciones", "ubicaciones"),
     ("Evidencias", "evidencias"),
     ("Sospechosos", "sospechosos"),
     ("Resolver Caso", "resolver"),
