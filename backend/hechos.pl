@@ -1,95 +1,64 @@
-% HEHCOS
 /*
-Contexto del caso: El Robo del Expediente Secreto
-Historia:
-En una exposición especial en la Academia de Detectives desapareció un expediente secreto 
-tenía información confidencial sobre una investigaciones en curso.
+Caso 3: Robo de un Archivo
+Historia
+Desapareció un archivo de una biblioteca a las 16:00.
 
-El robo ocurrió a las 15:00 horas en la Sala de Evidencias.
+Personas
+Gabriel
+Helen
+Ivan
 
-Cinco personas estuvieron presentes en el edificio ese día. A través de evidencias,
-testimonios y registros de acceso, se deberá determinar quién pudo haber cometido el robo.
+Lo que ocurrió
+Gabriel dijo que estaba en la biblioteca y efectivamente estaba allí.
+Helen dijo que estaba en la oficina y efectivamente estaba allí.
+Ivan dijo que estaba en la oficina.
+Los registros muestran que Ivan estaba realmente en la biblioteca.
+Una cámara de seguridad encontrada en la biblioteca está asociada a Ivan.
+
+Resultados esperados
+Evidencias
+Ivan -> video
+
+Contradicciones
+Solo Ivan debe tener contradicción.
+
+Ubicaciones
+Ivan -> biblioteca
+aunque declarara otra cosa.
+
+Sospechosos
+Ivan
+
+Descartados
+Helen
+
+Posibles responsables
+Ivan
 */
 
-% Personas
-persona(karina). 
-persona(carlos). 
-persona(nicole). 
-persona(diego).
-persona(andrey). 
+% Hechos
+persona(gabriel).
+persona(helen).
+persona(ivan).
 
-% Lugares (Nombre, Descripcion)
-lugar(laboratorio, "Laboratorio de la Academia de Detectives.").
-lugar(biblioteca, "Biblioteca de la Academia de Detectives.").
-lugar(oficina, "Oficina administrativa de la Academia.").
-lugar(sala_evidencias, "Sala de Evidencias donde se resguarda el expediente secreto.").
-lugar(entrada, "Entrada principal del edificio.").
+lugar(biblioteca).
+lugar(oficina).
+lugar(bodega).
 
-% Objetos
-objeto(tarjeta_maestra).
-objeto(llave_laboratorio).
-objeto(expediente_secreto).
+acceso(gabriel, biblioteca).
+acceso(helen, oficina).
+acceso(ivan, biblioteca).
 
-% Ubicación de los objetos
-ubicado(llave_laboratorio, biblioteca).
-ubicado(tarjeta_maestra, laboratorio).
-ubicado(expediente_secreto, sala_evidencias).
+estuvo(gabriel, biblioteca, 1600).
+estuvo(helen, oficina, 1600).
+estuvo(ivan, biblioteca, 1600).
 
-% Accesos a lugares (Persona, Lugar)
-acceso(karina, laboratorio).
-acceso(diego, oficina).
-acceso(karina, biblioteca).
-acceso(carlos, biblioteca).
-acceso(nicole, oficina).
-acceso(nicole, sala_evidencias).
-acceso(andrey, sala_evidencias).
+evento(robo_archivo, biblioteca, 1600).
 
-% Accesos por objetos (Lugar, objeto)
-accesoPorObjeto(sala_evidencias, tarjeta_maestra).
-accesoPorObjeto(laboratorio, llave_laboratorio).
+evidencia(video_seguridad, biblioteca, 1601).
+corresponde(video_seguridad, ivan).
 
-% Registro de movimientos (Persona, Lugar, Hora)
-estuvo(karina, entrada, 1800).
-estuvo(karina, biblioteca, 1900).
-estuvo(karina, laboratorio, 2000).
+testimonio(gabriel, biblioteca, 1600).
+testimonio(helen, oficina, 1600).
 
-estuvo(carlos, entrada, 1815).
-estuvo(carlos, biblioteca, 1915).
-estuvo(carlos, sala_evidencias, 2000).
-
-estuvo(nicole, entrada, 1830).
-estuvo(nicole, laboratorio, 1930).
-estuvo(nicole, sala_evidencias, 2000).
-
-estuvo(diego, entrada, 1845).
-estuvo(diego, laboratorio, 1945).
-estuvo(diego, biblioteca, 2000).
-
-estuvo(andrey, sala_evidencias, 1800).
-estuvo(andrey, biblioteca, 1900).
-estuvo(andrey, sala_evidencias, 2000).
-
-% Evento (Nombre, Lugar, Hora)
-evento(robo_expediente, sala_evidencias, 2000).
-
-% Evidencias (Evidencia, Lugar, Hora)
-evidencia(huella_digital, sala_evidencias, 2005).
-evidencia(registro_acceso, sala_evidencias, 2002).
-evidencia(video_seguridad, biblioteca, 1955).
-evidencia(llave_encontrada, laboratorio, 2010).
-evidencia(documento_anonimo, biblioteca, 2015).
-
-% Correponde evidencia (Evidencia, Persona)
-corresponde(huella_digital, karina).
-corresponde(registro_acceso, carlos).
-corresponde(video_seguridad, nicole).
-corresponde(llave_encontrada, diego).
-corresponde(documento_anonimo, andrey).
-
-% Testimonios (Persona, Lugar, Hora)
-testimonio(karina, biblioteca, 2000).
-testimonio(carlos, biblioteca, 2000).
-testimonio(nicole, oficina, 2000).
-% testimonio(diego, laboratorio, 2000)
-testimonio(diego, biblioteca, 2000).
-testimonio(andrey, sala_evidencias, 1900).
+testimonio(ivan, oficina, 1600).

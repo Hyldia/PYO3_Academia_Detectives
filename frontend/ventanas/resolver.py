@@ -1,5 +1,5 @@
 from consultas import (consultar_clasificacion, consultar_coartada, consultar_descarte, consultar_explicaciones, consultar_inferencia,
-                       consultar_personas, consultar_resolucion)
+                    consultar_personas, consultar_resolucion)
 from ventanas.estilos import COLOR_TARJETA, COLOR_TEXTO, colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_lienzo, escribir
 from ventanas.navegacion import ir_a
 from ventanas.sospechosos import NOMBRES_DECISION, decisiones

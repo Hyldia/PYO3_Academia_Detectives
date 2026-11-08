@@ -73,7 +73,7 @@ def consultar(combo_persona, combo_lugar_1, entrada_hora, combo_lugar_2, entrada
     fin = entrada_fin.get().strip()
     # Caso donde esten ambos
     if hora and (inicio or fin):
-        mostrar_aviso("Use una consulta por hora o por intervalo, no ambas. Debe eliminar la o las horas de alguna de las opcines, hora exacta o intervalo")
+        mostrar_aviso("Use una consulta por hora o por intervalo, no ambas. Debe eliminar la o las horas de alguna de las opciones, hora exacta o intervalo")
         return
     # Consulta por hora exacta
     if hora:
