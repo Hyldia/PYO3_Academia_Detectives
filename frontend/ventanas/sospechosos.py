@@ -1,7 +1,7 @@
 from consultas import (consultar_contradicciones, consultar_declaraciones, consultar_detalle_evidencias, consultar_evento,
-                       consultar_motivos_acceso, consultar_personas, consultar_recorrido)
+                    consultar_motivos_acceso, consultar_personas, consultar_recorrido)
 from ventanas.estilos import (COLOR_ACENTO, colocar, crear_area_resultado, crear_boton, crear_boton_kraft, crear_lista, escribir,
-                              etiqueta, mostrar_aviso)
+                            etiqueta, mostrar_aviso)
 from ventanas.navegacion import ir_a, pantalla_seccion
 
 TARJETA_DECISION = 5
@@ -10,6 +10,7 @@ TARJETA_DECISION = 5
 NOMBRES_DECISION = {
     "responsable": "Posible responsable",
     "descartada": "Descartada",
+    "en_investigacion": "Mantener en investigación",
 }
 
 # La persona abierta y la tarjeta actual
@@ -133,6 +134,7 @@ def tarjeta_decision(area, persona):
     escribir(area, f"Con lo que revisó, ¿qué concluye sobre {persona}?\n\n")
     escribir(area, "• Posible responsable: tuvo oportunidad y hay indicios en su contra.\n", "item")
     escribir(area, "• Descartada: la información demuestra que no pudo participar.\n", "item")
+    escribir(area, "• Mantener en investigación: no hay suficientes pruebas para responsabilizarla ni para descartarla.\n", "item")
     decision = decisiones.get(persona)
     if decision:
         escribir(area, "\n")
@@ -153,7 +155,7 @@ def colocar_navegacion(lienzo, numero, persona):
     if numero < TARJETA_DECISION:
         colocar(lienzo, crear_boton(lienzo, "Siguiente", lambda: cambiar_tarjeta(numero + 1)), 1095, 640, 130, 36)
         return
-    x = 560
+    x = 500
     for decision, texto in NOMBRES_DECISION.items():
         if decisiones.get(persona) == decision:
             boton = crear_boton(lienzo, texto, lambda d=decision: decidir(d), COLOR_ACENTO, "white", COLOR_ACENTO)
@@ -188,8 +190,8 @@ def mostrar_sospechosos(padre):
     if not persona:
         escribir(area, "Cómo investigar\n", "titulo")
         escribir(area, "Elija una persona y abra su expediente. Revise cada tarjeta y relacione los datos con el evento. "
-                       "En la última tarjeta marque si la considera posible responsable o si la descarta. "
-                       "Al final, en Resolver caso, verá lo que usted marcó junto con lo que deduce el sistema.\n")
+                    "En la última tarjeta marque si la considera posible responsable, si la descarta o si la mantiene en investigación. "
+                    "Al final, en Resolver caso, verá lo que usted marcó junto con lo que deduce el sistema.\n")
         return
 
     numero = estado["tarjeta"]
