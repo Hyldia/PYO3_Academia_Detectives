@@ -20,9 +20,10 @@ def mostrar_portada(padre):
         nombre, lugar, hora, _, _ = evento
         lienzo.create_text(645, 312, text=f"Caso: {nombre}  ·  {lugar}  ·  {hora}", font=("Segoe UI", 12, "bold"), fill=COLOR_TEXTO)
 
-    colocar(lienzo, crear_boton(lienzo, "Consultar Accesos", lambda: ir_a("accesos")), 445, 415, 200, 50)
-    colocar(lienzo, crear_boton(lienzo, "Consultar Evidencias", lambda: ir_a("evidencias")), 665, 415, 200, 50)
-    colocar(lienzo, crear_boton(lienzo, "Consultar Sospechosos", lambda: ir_a("sospechosos")), 445, 480, 200, 50)
-    colocar(lienzo, crear_boton(lienzo, "Resolver Caso", lambda: ir_a("resolver")), 665, 480, 200, 50)
-    colocar(lienzo, crear_boton_kraft(lienzo, "Salir", padre.destroy), 555, 550, 200, 40)
+    colocar(lienzo, crear_boton(lienzo, "Consultar Accesos", lambda: ir_a("accesos")), 445, 380, 200, 50)
+    colocar(lienzo, crear_boton(lienzo, "Consultar Ubicaciones", lambda: ir_a("ubicaciones")),  665, 380, 200, 50)
+    colocar(lienzo, crear_boton(lienzo, "Consultar Evidencias", lambda: ir_a("evidencias")), 445, 445, 200, 50)
+    colocar(lienzo, crear_boton(lienzo, "Consultar Sospechosos", lambda: ir_a("sospechosos")), 665, 445, 200, 50)
+    colocar(lienzo, crear_boton(lienzo, "Resolver Caso", lambda: ir_a("resolver")), 555, 520, 200, 50)
+    colocar(lienzo, crear_boton_kraft(lienzo, "Salir", padre.destroy), 555, 585, 200, 40)
     
