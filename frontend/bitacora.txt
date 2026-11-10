@@ -1,0 +1,48 @@
+2169114 | SalazarMurilloDeilyn | 2026-11-09 19:28 | error en arreglo
+cba118e | DeyshmelinFallas | 2026-11-08 23:17 | Merge pull request #19 from Hyldia/develop
+42b475e | Hyldia Thomas Hodgson | 2026-11-08 17:39 | Merge pull request #18 from Hyldia/feature/pruebas_y_arreglos
+216ddce | Hyldia | 2026-11-08 17:38 | Se agregó el botón para mantener a una persona en investigación y se arregló un menaje mal escrito
+52867aa | Hyldia | 2026-11-08 17:22 | Ajuste de hora para que se muestre  el formato completo en las horas de 0000 a 0959
+725bf48 | Hyldia | 2026-11-08 17:16 | arreglo de sigue en investigación para que aparezca en el resumen del caso
+0e2010e | DeilynSalazarMrillo | 2026-11-08 15:20 | Merge pull request #17 from Hyldia/feature/interfaz-nueva
+933206c | SalazarMurilloDeilyn | 2026-11-08 15:19 | Interfaz final
+871e8e5 | DeilynSalazarMrillo | 2026-11-08 14:45 | Merge pull request #16 from Hyldia/develop
+d20062b | Hyldia Thomas Hodgson | 2026-11-08 00:17 | Merge pull request #15 from Hyldia/feature/arreglos_accesos_estuvo
+a265b7f | Hyldia | 2026-11-08 00:16 | Se cambio de lugar los movimientos y se agrego la opción de ver donde estuvo una persona en una hora especifica
+7493e75 | Hyldia | 2026-11-07 21:50 | Arreglo de acceso, mostrar si se tiene acceso por medio de un objeto
+9a38106 | DeyshmelinFallas | 2026-11-07 21:18 | correccion en el formato de texto
+8147e83 | DeyshmelinFallas | 2026-11-07 10:38 | Merge pull request #14 from Hyldia/feature/correcciones
+2f151e2 | DeyshmelinFallas | 2026-11-07 10:35 | correcciones en predicados y hechos
+77c7ce1 | DeilynSalazarMrillo | 2026-11-06 18:14 | Merge pull request #13 from Hyldia/feature/opciones-sospechosos
+3c46886 | DeilynSalazarMrillo | 2026-11-06 18:14 | Merge branch 'develop' into feature/opciones-sospechosos
+e7b4152 | SalazarMurilloDeilyn | 2026-11-06 18:13 | sospechosos
+e4ac84b | SalazarMurilloDeilyn | 2026-11-06 18:08 | detalles de interfaz
+1f97033 | Hyldia Thomas Hodgson | 2026-11-06 17:20 | Merge pull request #12 from Hyldia/feature/arreglos
+82cf0f2 | Hyldia | 2026-11-06 17:17 | Proteger accesos por objeto
+5fd2b42 | DeilynSalazarMrillo | 2026-11-06 15:56 | Merge pull request #11 from Hyldia/feature/interfaz-nueva
+e15f16f | DeyshmelinFallas | 2026-11-05 22:59 | Merge pull request #10 from Hyldia/feature/resolver
+284060c | DeyshmelinFallas | 2026-11-05 22:57 | implementacion de resolver
+d0de68e | DeyshmelinFallas | 2026-11-05 22:13 | implementacion de explicaciones sobre una persona
+b0fb2e0 | DeyshmelinFallas | 2026-11-05 18:25 | implementacion del predicado de posibles responsables
+598f974 | DeyshmelinFallas | 2026-11-05 14:59 | implemen tacion del predicado de investigar una persona en especifico y auxiliares para el funcionamiento de este
+3ba4109 | Hyldia Thomas Hodgson | 2026-11-05 12:54 | Merge pull request #8 from Hyldia/feature/descartar
+119893d | Hyldia | 2026-11-05 12:52 | Se agregó el predicado para descarar a una persona según ciertos términos
+910fd14 | SalazarMurilloDeilyn | 2026-11-05 00:39 | nueva interfaz
+475b825 | DeilynSalazarMrillo | 2026-11-04 23:27 | Merge pull request #7 from Hyldia/feature/ventana-sospechosos
+61f3bab | SalazarMurilloDeilyn | 2026-11-04 22:30 | Agrega ventana de analisis de sospechoso
+61812c0 | DeilynSalazarMrillo | 2026-11-04 22:14 | Merge pull request #6 from Hyldia/feature/interfaz-sospechosos
+3c108c2 | SalazarMurilloDeilyn | 2026-11-04 22:13 | Agrega consultas de sospechosos, coartadas y contradicciones
+e6e4940 | DeilynSalazarMrillo | 2026-11-04 14:14 | Merge pull request #5 from Hyldia/feature/posible-sospechoso
+44047b6 | SalazarMurilloDeilyn | 2026-11-04 14:13 | posible sospechoso
+757af61 | DeilynSalazarMrillo | 2026-11-04 14:04 | Merge pull request #4 from Hyldia/feature/contradiccion-coartada
+1aed8e6 | SalazarMurilloDeilyn | 2026-11-04 14:01 | Agrega contradiccion de coartada
+eae502a | SalazarMurilloDeilyn | 2026-11-04 13:57 | Agrega manejo de horas y deteccion de contradicciones
+35cdd28 | Hyldia Thomas Hodgson | 2026-11-01 12:52 | Merge pull request #3 from Hyldia/feature/estuvo-evidencias
+90571e1 | Hyldia | 2026-11-01 12:50 | Se agregó la funcionalidad de evidencia y movimeintos
+11eb3ca | Hyldia Thomas Hodgson | 2026-10-30 17:17 | Merge pull request #2 from Hyldia/feature/tiene_acceso
+82bb1f7 | Hyldia | 2026-10-30 17:15 | Interfaz inicial y se agregó la opción de consular accesos
+97925a4 | Hyldia | 2026-10-30 13:00 | Arreglo de algunos hechos y se agregó el  predicado de acceso
+5915a7a | Hyldia Thomas Hodgson | 2026-10-30 12:11 | Merge pull request #1 from Hyldia/feature/conocimiento
+2de00bd | Hyldia | 2026-10-30 11:08 | Se agregó la base de conocimientos junto con el contexto de el caso
+4695999 | Hyldia Thomas Hodgson | 2026-10-30 09:54 | Add project description and team members to README
+e7015de | Hyldia Thomas Hodgson | 2026-10-30 09:45 | Initial commit
