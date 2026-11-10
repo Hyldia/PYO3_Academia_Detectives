@@ -555,7 +555,7 @@ resolver_caso :-
   format("~n----------------------------------------~n"),
   format("  CONTINUAN EN INVESTIGACION~n"),
   format("----------------------------------------~n~n"),
-  (iNVESTIGACION == []
+  (Investigacion == []
   -> format(" No hay personas que continuan bajo investigación.~n");
   forall(miembro(I, Investigacion), format("  - ~w~n", [I]))
   ),
